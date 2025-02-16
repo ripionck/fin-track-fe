@@ -36,6 +36,8 @@ export default function Dashboard() {
           default:
             return <ProfileSettings />;
         }
+      default:
+        return <Overview />;
     }
   };
 

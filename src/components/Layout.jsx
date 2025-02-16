@@ -1,16 +1,17 @@
+import axios from 'axios';
 import {
-  LayoutGrid,
-  Receipt,
-  PieChart,
-  Wallet2,
-  User,
   Bell,
+  LayoutGrid,
+  LogOut,
+  PieChart,
+  Receipt,
   Settings,
   Tags,
-  LogOut,
-  ChevronDown,
+  User,
+  Wallet2,
 } from 'lucide-react';
-import { useState } from 'react';
+import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
 
 export default function Layout({
   children,
@@ -19,6 +20,36 @@ export default function Layout({
   activeSettings,
   onSettingsChange,
 }) {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [userProfile, setUserProfile] = useState({
+    name: 'John Doe',
+    email: 'john@example.com',
+  });
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(
+          'https://fin-track-api-silk.vercel.app/api/users/profile',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        setUserProfile({
+          name: `${response.data.firstName} ${response.data.lastName}`,
+          email: response.data.email,
+        });
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
   const navItems = [
     { id: 'overview', icon: LayoutGrid, label: 'Overview' },
     { id: 'transactions', icon: Receipt, label: 'Transactions' },
@@ -38,7 +69,10 @@ export default function Layout({
     onPageChange('settings');
   };
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -78,8 +112,8 @@ export default function Layout({
               alt="Profile"
             />
             <div className="text-left">
-              <p className="font-medium">John Doe</p>
-              <p className="text-sm text-gray-500">john@example.com</p>
+              <p className="font-medium">{userProfile.name}</p>
+              <p className="text-sm text-gray-500">{userProfile.email}</p>
             </div>
           </button>
           {isDropdownOpen && (
@@ -90,7 +124,9 @@ export default function Layout({
                   <button
                     key={item.id}
                     onClick={() => handleSettingsClick(item.id)}
-                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    className={`flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 ${
+                      activeSettings === item.id ? 'bg-blue-50' : ''
+                    }`}
                   >
                     <Icon className="mr-2 h-4 w-4" />
                     <span>{item.label}</span>
@@ -99,9 +135,7 @@ export default function Layout({
               })}
               <hr className="my-1" />
               <button
-                onClick={() => {
-                  /* Add logout functionality */
-                }}
+                onClick={handleLogout}
                 className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
               >
                 <LogOut className="mr-2 h-4 w-4" />
@@ -115,3 +149,11 @@ export default function Layout({
     </div>
   );
 }
+
+Layout.propTypes = {
+  children: PropTypes.node.isRequired,
+  activePage: PropTypes.string.isRequired,
+  onPageChange: PropTypes.func.isRequired,
+  activeSettings: PropTypes.string,
+  onSettingsChange: PropTypes.func.isRequired,
+};
