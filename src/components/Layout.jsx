@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Layout({
   children,
@@ -38,9 +39,10 @@ export default function Layout({
             },
           },
         );
+        console.log(response.data);
         setUserProfile({
-          name: `${response.data.firstName} ${response.data.lastName}`,
-          email: response.data.email,
+          name: `${response.data.user.firstName} ${response.data.user.lastName}`,
+          email: response.data.user.email,
         });
       } catch (error) {
         console.error('Failed to fetch user profile:', error);
@@ -78,7 +80,9 @@ export default function Layout({
     <div className="flex h-screen bg-gray-100">
       <aside className="w-64 bg-white p-6 shadow-md flex flex-col justify-between">
         <div>
-          <h1 className="text-xl font-bold mb-8">FinTrack</h1>
+          <Link to="/">
+            <h1 className="text-xl font-bold mb-8">FinTrack</h1>
+          </Link>
           <nav className="space-y-2">
             {navItems.map((item) => {
               const Icon = item.icon;

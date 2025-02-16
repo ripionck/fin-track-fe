@@ -4,7 +4,7 @@ import Budgets from '../components/Budgets';
 import Layout from '../components/Layout';
 import Overview from '../components/Overview';
 import Transactions from '../components/Transactions';
-import Categories from '../components/settings/Categories';
+import Categories from '../components/categories/categories';
 import NotificationSettings from '../components/settings/NotificationSettings';
 import Preferences from '../components/settings/Preferences';
 import ProfileSettings from '../components/settings/ProfileSettings';
