@@ -1,52 +1,29 @@
-import { useState } from 'react';
-import Analytics from '../components/Analytics';
-import Budgets from '../components/Budgets';
-import Layout from '../components/Layout';
-import Overview from '../components/Overview';
-import Transactions from '../components/Transactions';
-import Categories from '../components/settings/Categories';
-import NotificationSettings from '../components/settings/NotificationSettings';
-import Preferences from '../components/settings/Preferences';
-import ProfileSettings from '../components/settings/ProfileSettings';
-
-export default function Home() {
-  const [currentPage, setCurrentPage] = useState('overview');
-  const [activeSettings, setActiveSettings] = useState(null);
-
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'overview':
-        return <Overview />;
-      case 'transactions':
-        return <Transactions />;
-      case 'budgets':
-        return <Budgets />;
-      case 'analytics':
-        return <Analytics />;
-      case 'settings':
-        switch (activeSettings) {
-          case 'profile':
-            return <ProfileSettings />;
-          case 'notifications':
-            return <NotificationSettings />;
-          case 'preferences':
-            return <Preferences />;
-          case 'categories':
-            return <Categories />;
-          default:
-            return <ProfileSettings />;
-        }
-    }
-  };
-
+export default function GetStarted() {
   return (
-    <Layout
-      activePage={currentPage}
-      onPageChange={setCurrentPage}
-      activeSettings={activeSettings}
-      onSettingsChange={setActiveSettings}
+    <div
+      className="min-h-screen relative bg-auto bg-center flex items-center justify-center p-4"
+      style={{ backgroundImage: 'url(/fin-track.png)' }}
     >
-      {renderPage()}
-    </Layout>
+      <div className="absolute bottom-16 rounded-lg px-8 w-full max-w-md">
+        <h1 className="text-2xl text-yellow-100 font-bold text-center mb-2">
+          Want to Track Your Finance?
+        </h1>
+
+        <button
+          onClick={() => (window.location.href = '/login')}
+          className="w-full bg-white text-lg font-bold uppercase hover:bg-gray-50 text-gray-800 py-3 rounded-full border-2 border-gray-200"
+        >
+          Sign in
+        </button>
+
+        <div className="flex justify-center mt-4">
+          <div className="flex space-x-2">
+            <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+            <div className="w-2 h-2 rounded-full bg-gray-300"></div>
+            <div className="w-2 h-2 rounded-full bg-gray-300"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
