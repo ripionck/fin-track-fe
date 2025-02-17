@@ -6,14 +6,14 @@ import {
 } from 'react-router-dom';
 import Analytics from './components/Analytics';
 import Budgets from './components/Budgets';
-import Categories from './components/categories/Categories';
 import Layout from './components/Layout';
 import NotFound from './components/NotFound';
 import Overview from './components/Overview';
 import ProfileSettings from './components/profileSettings/ProfileSettings';
+import Categories from './components/settings/Categories';
 import NotificationSettings from './components/settings/NotificationSettings';
 import Preferences from './components/settings/Preferences';
-import Transactions from './components/Transactions/Transactions';
+import Transactions from './components/Transactions';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';

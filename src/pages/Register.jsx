@@ -75,24 +75,42 @@ export default function Register() {
         },
       );
 
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('refreshToken', response.refreshToken);
+      if (response.status >= 200 && response.status < 300) {
+        setSuccess(
+          response.data.message ||
+            'Registration successful! Redirecting to login...',
+        );
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+        });
 
-      setSuccess('Registration successful! Redirecting to login...');
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-      });
-
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      } else {
+        console.error('Registration failed:', response.status, response.data);
+        setError(
+          response.data.message || 'Registration failed. Please try again.',
+        );
+      }
     } catch (err) {
       console.error('Registration failed:', err);
-      setError(err.message || 'Registration failed. Please try again.');
+      if (axios.isAxiosError(err)) {
+        setError(
+          err.response?.data?.message ||
+            'Registration failed. Please try again.',
+        );
+      } else if (err.message === 'Network Error') {
+        setError(
+          'A network error occurred. Please check your internet connection.',
+        );
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
     }
   };
 

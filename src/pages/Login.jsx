@@ -26,16 +26,34 @@ export default function Login() {
         formData,
       );
 
-      console.log('Login successful:', response);
+      if (response.status >= 200 && response.status < 300) {
+        console.log('Login successful:', response);
 
-      // Store tokens
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('refreshToken', response.refreshToken);
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('refreshToken', response.data.refreshToken);
 
-      navigate('/overview');
+        navigate('/overview');
+      } else {
+        console.error('Login failed:', response.status, response.data);
+        setError(
+          response.data.message ||
+            'Login failed. Please check your credentials.',
+        );
+      }
     } catch (err) {
       console.error('Login failed:', err);
-      setError(err.message || 'Login failed. Please check your credentials.');
+      if (axios.isAxiosError(err)) {
+        setError(
+          err.response?.data?.message ||
+            'Login failed. Please check your credentials.',
+        );
+      } else if (err.message === 'Network Error') {
+        setError(
+          'A network error occurred. Please check your internet connection.',
+        );
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
     }
   };
 

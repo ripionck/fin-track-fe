@@ -21,8 +21,8 @@ export default function Layout() {
   });
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
     const fetchUserProfile = async () => {
-      const token = localStorage.getItem('token');
       try {
         const response = await axios.get(
           'http://localhost:5000/api/users/profile',
@@ -32,6 +32,7 @@ export default function Layout() {
             },
           },
         );
+        console.log(response.data);
         setUserProfile({
           name: `${response.data.user.firstName} ${response.data.user.lastName}`,
           email: response.data.user.email,

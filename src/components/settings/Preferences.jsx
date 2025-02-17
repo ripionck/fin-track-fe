@@ -24,107 +24,105 @@ export default function Preferences() {
       <h2 className="text-2xl font-bold">Preferences</h2>
 
       <div className="space-y-4">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label
-              htmlFor="theme"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Theme
-            </label>
-            <select
-              id="theme"
-              name="theme"
-              value={preferences.theme}
-              onChange={handleChange}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-            >
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-              <option value="system">System</option>
-            </select>
-          </div>
+        <div>
+          <label
+            htmlFor="theme"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Theme
+          </label>
+          <select
+            id="theme"
+            name="theme"
+            value={preferences.theme}
+            onChange={handleChange}
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          >
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="system">System</option>
+          </select>
+        </div>
 
-          <div>
-            <label
-              htmlFor="dateFormat"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Date Format
-            </label>
-            <select
-              id="dateFormat"
-              name="dateFormat"
-              value={preferences.dateFormat}
-              onChange={handleChange}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-            >
-              <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-              <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-              <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-            </select>
-          </div>
+        <div>
+          <label
+            htmlFor="dateFormat"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Date Format
+          </label>
+          <select
+            id="dateFormat"
+            name="dateFormat"
+            value={preferences.dateFormat}
+            onChange={handleChange}
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          >
+            <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+            <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+            <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+          </select>
+        </div>
 
-          <div>
-            <label
-              htmlFor="language"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Language
-            </label>
-            <select
-              id="language"
-              name="language"
-              value={preferences.language}
-              onChange={handleChange}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-            >
-              <option value="en">English</option>
-              <option value="es">Español</option>
-              <option value="fr">Français</option>
-              <option value="de">Deutsch</option>
-            </select>
-          </div>
+        <div>
+          <label
+            htmlFor="language"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Language
+          </label>
+          <select
+            id="language"
+            name="language"
+            value={preferences.language}
+            onChange={handleChange}
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          >
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+          </select>
+        </div>
 
-          <div>
-            <label
-              htmlFor="currency"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Default Currency
-            </label>
-            <select
-              id="currency"
-              name="currency"
-              value={preferences.currency}
-              onChange={handleChange}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-            >
-              <option value="USD">USD ($)</option>
-              <option value="EUR">EUR (€)</option>
-              <option value="GBP">GBP (£)</option>
-              <option value="JPY">JPY (¥)</option>
-            </select>
-          </div>
+        <div>
+          <label
+            htmlFor="currency"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Default Currency
+          </label>
+          <select
+            id="currency"
+            name="currency"
+            value={preferences.currency}
+            onChange={handleChange}
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          >
+            <option value="USD">USD ($)</option>
+            <option value="EUR">EUR (€)</option>
+            <option value="GBP">GBP (£)</option>
+            <option value="JPY">JPY (¥)</option>
+          </select>
+        </div>
 
-          <div>
-            <label
-              htmlFor="startOfWeek"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Start of Week
-            </label>
-            <select
-              id="startOfWeek"
-              name="startOfWeek"
-              value={preferences.startOfWeek}
-              onChange={handleChange}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-            >
-              <option value="sunday">Sunday</option>
-              <option value="monday">Monday</option>
-            </select>
-          </div>
+        <div>
+          <label
+            htmlFor="startOfWeek"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Start of Week
+          </label>
+          <select
+            id="startOfWeek"
+            name="startOfWeek"
+            value={preferences.startOfWeek}
+            onChange={handleChange}
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          >
+            <option value="sunday">Sunday</option>
+            <option value="monday">Monday</option>
+          </select>
         </div>
 
         <div className="flex items-center justify-between">
