@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -250,7 +250,7 @@ export default function Register() {
 
           <button
             type="submit"
-            className="w-full bg-[#1e2e42] hover:bg-[#1e2e42] text-white py-3 cursor-pointer rounded-full"
+            className="w-full bg-[#1e2e42] hover:bg-[#1e2e42] text-white py-3 uppercase cursor-pointer rounded-full"
           >
             Sign up
           </button>
@@ -258,9 +258,9 @@ export default function Register() {
 
         <p className="text-center mt-6 text-gray-600">
           Already have an account?
-          <a href="/login" className="text-[#1e2e42] ml-1.5">
+          <Link to="/login" className="text-[#1e2e42] ml-1.5 uppercase">
             Login
-          </a>
+          </Link>
         </p>
       </div>
     </div>

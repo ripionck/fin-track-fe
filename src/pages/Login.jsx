@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,8 +30,7 @@ export default function Login() {
         console.log('Login successful:', response);
 
         localStorage.setItem('token', response.data.token);
-
-        navigate('/overview');
+        navigate('/app/overview');
       } else {
         console.error('Login failed:', response.status, response.data);
         setError(
@@ -111,23 +110,29 @@ export default function Login() {
 
           <button
             type="submit"
-            className="w-full bg-[#1e2e42] hover:bg-[#1e2e42]/90 text-white cursor-pointer py-3 rounded-full transition-all"
+            className="w-full bg-[#1e2e42] hover:bg-[#1e2e42]/90 text-white uppercase cursor-pointer py-3 rounded-full transition-all"
           >
             Sign in
           </button>
         </form>
 
         <div className="text-center mt-6">
-          <a href="/forgot-password" className="text-[#1e2e42] hover:underline">
+          <a
+            href="/forgot-password"
+            className="text-[#1e2e42] uppercase hover:underline"
+          >
             Forgot password?
           </a>
         </div>
 
         <p className="text-center mt-6 text-gray-600">
           Don&apos;t have an account?
-          <a href="/register" className="text-[#1e2e42] ml-1.5 hover:underline">
+          <Link
+            to="/register"
+            className="text-[#1e2e42] ml-1.5 uppercase hover:underline"
+          >
             Sign up here
-          </a>
+          </Link>
         </p>
       </div>
     </div>

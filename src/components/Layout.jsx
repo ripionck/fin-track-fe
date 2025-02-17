@@ -11,13 +11,14 @@ import {
 
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 
 export default function Layout() {
+  const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState({
-    name: 'Loading...',
-    email: 'Loading...',
+    name: 'Anonymous',
+    email: 'example@gmail.com',
   });
 
   useEffect(() => {
@@ -81,7 +82,7 @@ export default function Layout() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    Navigate('/login');
+    navigate('/login');
   };
 
   return (
