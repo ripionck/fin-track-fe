@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Camera, Save, Trash } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 
 const api = axios.create({
   baseURL: 'http://localhost:5000/api',
@@ -123,7 +124,7 @@ export default function ProfileSettings() {
         await api.delete('/users/me');
         // Redirect to login or home page after deletion
         localStorage.removeItem('token');
-        window.location.href = '/login';
+        Navigate('/login');
       } catch (err) {
         console.error('Error:', err.response?.data || err.message);
       }

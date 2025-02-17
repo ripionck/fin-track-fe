@@ -29,7 +29,6 @@ export default function Layout() {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response.data);
         setUserProfile({
           name: `${response.data.firstName} ${response.data.lastName}`,
           email: response.data.email,
