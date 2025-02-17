@@ -2,7 +2,7 @@ export default function GetStarted() {
   return (
     <div
       className="min-h-screen relative bg-auto bg-center flex items-center justify-center p-4"
-      style={{ backgroundImage: 'url(/fin-track.png)' }}
+      style={{ backgroundImage: 'url(/fin-track.jpg)' }}
     >
       <div className="absolute bottom-16 rounded-lg px-8 w-full max-w-md">
         <h1 className="text-2xl text-yellow-100 font-bold text-center mb-2">

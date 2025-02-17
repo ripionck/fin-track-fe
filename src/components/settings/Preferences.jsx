@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Preferences() {
   const [preferences, setPreferences] = useState({
@@ -6,9 +6,35 @@ export default function Preferences() {
     dateFormat: 'MM/DD/YYYY',
     compactView: false,
     language: 'en',
-    currency: 'USD',
     startOfWeek: 'sunday',
   });
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/preferences', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch preferences');
+
+        const data = await response.json();
+        setPreferences(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPreferences();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,11 +45,55 @@ export default function Preferences() {
     setPreferences((prev) => ({ ...prev, [name]: !prev[name] }));
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSaving(true);
+    setError(null);
+    setSuccess(false);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/preferences', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify(preferences),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update preferences');
+      }
+
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (isLoading) return <div className="p-4">Loading preferences...</div>;
+
   return (
-    <div className="space-y-6 max-w-2xl ml-8">
+    <div className="space-y-6 max-w-2xl ml-8 p-4">
       <h2 className="text-2xl font-bold">Preferences</h2>
 
-      <div className="space-y-4">
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+          {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
+          Preferences updated successfully!
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label
             htmlFor="theme"
@@ -44,6 +114,7 @@ export default function Preferences() {
           </select>
         </div>
 
+        {/* Date Format Selection */}
         <div>
           <label
             htmlFor="dateFormat"
@@ -64,6 +135,7 @@ export default function Preferences() {
           </select>
         </div>
 
+        {/* Language Selection */}
         <div>
           <label
             htmlFor="language"
@@ -85,6 +157,7 @@ export default function Preferences() {
           </select>
         </div>
 
+        {/* Currency Selection */}
         <div>
           <label
             htmlFor="currency"
@@ -106,6 +179,7 @@ export default function Preferences() {
           </select>
         </div>
 
+        {/* Start of Week Selection */}
         <div>
           <label
             htmlFor="startOfWeek"
@@ -125,6 +199,7 @@ export default function Preferences() {
           </select>
         </div>
 
+        {/* Compact View Toggle */}
         <div className="flex items-center justify-between">
           <span className="flex-grow flex flex-col">
             <span className="text-sm font-medium text-gray-900">
@@ -150,7 +225,21 @@ export default function Preferences() {
             />
           </button>
         </div>
-      </div>
+
+        <div className="mt-8">
+          <button
+            type="submit"
+            disabled={isSaving}
+            className={`px-4 py-2 rounded-md ${
+              isSaving
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-indigo-600 hover:bg-indigo-700'
+            } text-white transition-colors`}
+          >
+            {isSaving ? 'Saving...' : 'Save Preferences'}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

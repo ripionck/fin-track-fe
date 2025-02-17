@@ -32,8 +32,8 @@ export default function ProfileDropdown({
         aria-controls="profile-menu"
       >
         <img
-          src="/default.png"
-          className="w-9 h-9 rounded-full"
+          src="/default.jpg"
+          className="w-12 h-12 rounded-full"
           alt="User profile"
         />
         <div className="text-left">
