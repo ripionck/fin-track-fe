@@ -24,18 +24,15 @@ export default function Layout() {
     const token = localStorage.getItem('token');
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get(
-          'http://localhost:5000/api/users/profile',
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        const response = await axios.get('http://localhost:5000/api/users/me', {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
         console.log(response.data);
         setUserProfile({
-          name: `${response.data.user.firstName} ${response.data.user.lastName}`,
-          email: response.data.user.email,
+          name: `${response.data.firstName} ${response.data.lastName}`,
+          email: response.data.email,
         });
       } catch (error) {
         console.error('Failed to fetch profile:', error);
@@ -85,7 +82,6 @@ export default function Layout() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
     Navigate('/login');
   };
 

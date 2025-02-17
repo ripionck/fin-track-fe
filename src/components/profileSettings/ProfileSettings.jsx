@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AvatarUpload from './AvatarUpload';
 import ProfileActions from './ProfileActions';
 import ProfileFormFields from './ProfileFormFields';
-import ProfileImageUpload from './ProfileImageUpload';
 
 const ProfileSettings = () => {
   const navigate = useNavigate();
@@ -14,14 +14,13 @@ const ProfileSettings = () => {
     currency: 'USD',
     bio: '',
     twoFactorEnabled: false,
-    profileImage: '/placeholder-user.jpg',
+    avatar: '/default.png',
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
-  // Fetch profile data on component mount
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -30,15 +29,12 @@ const ProfileSettings = () => {
           throw new Error('No token found. Please log in.');
         }
 
-        const response = await axios.get(
-          'http://localhost:5000/api/users/profile',
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
+        const response = await axios.get('http://localhost:5000/api/users/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setProfileData({
-          ...response.data.user,
-          profileImage: response.data.user.profileImage || '/default.png',
+          ...response.data,
+          avatar: response.data.avatar || '/default.png',
         });
       } catch (error) {
         setError(error.message || 'Failed to load profile data');
@@ -50,13 +46,11 @@ const ProfileSettings = () => {
     fetchProfile();
   }, [navigate]);
 
-  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProfileData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle toggle for two-factor authentication
   const handleToggle = () => {
     setProfileData((prev) => ({
       ...prev,
@@ -64,20 +58,18 @@ const ProfileSettings = () => {
     }));
   };
 
-  // Handle file selection for profile image
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfileData((prev) => ({ ...prev, profileImage: reader.result }));
+        setProfileData((prev) => ({ ...prev, avatar: reader.result }));
       };
       reader.readAsDataURL(file);
     }
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
@@ -89,9 +81,8 @@ const ProfileSettings = () => {
         throw new Error('No token found. Please log in.');
       }
 
-      // Update profile data
       const updatedProfile = await axios.put(
-        'http://localhost:5000/api/users/profile',
+        'http://localhost:5000/api/users/me',
         {
           firstName: profileData.firstName,
           lastName: profileData.lastName,
@@ -103,23 +94,25 @@ const ProfileSettings = () => {
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
-      // Update profile image if a new file is selected
       if (selectedFile) {
         const formData = new FormData();
         formData.append('file', selectedFile);
 
         const response = await axios.post(
-          'http://localhost:5000/api/users/upload',
+          'http://localhost:5000/api/users/me/avatar',
           formData,
           {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data',
+            },
           },
         );
 
-        updatedProfile.data.user.profileImage = response.data.fileUrl;
+        updatedProfile.data.avatar = response.data.fileUrl;
       }
 
-      setProfileData(updatedProfile.data.user);
+      setProfileData(updatedProfile.data);
       setSuccess('Profile updated successfully!');
       setSelectedFile(null);
     } catch (error) {
@@ -128,7 +121,6 @@ const ProfileSettings = () => {
     }
   };
 
-  // Handle account deletion
   const handleDeleteAccount = async () => {
     if (
       !window.confirm(
@@ -143,7 +135,7 @@ const ProfileSettings = () => {
         throw new Error('No token found. Please log in.');
       }
 
-      await axios.delete('http://localhost:5000/api/users/profile', {
+      await axios.delete('http://localhost:5000/api/users/me', {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -154,7 +146,6 @@ const ProfileSettings = () => {
     }
   };
 
-  // Render loading state
   if (isLoading)
     return <div className="p-4 text-gray-500">Loading profile...</div>;
 
@@ -168,8 +159,8 @@ const ProfileSettings = () => {
         <div className="text-green-500 p-2 rounded bg-green-50">{success}</div>
       )}
       <form onSubmit={handleSubmit} className="space-y-6">
-        <ProfileImageUpload
-          profileImage={profileData.profileImage}
+        <AvatarUpload
+          avatar={profileData.avatar}
           onFileChange={handleFileChange}
         />
         <ProfileFormFields

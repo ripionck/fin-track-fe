@@ -10,7 +10,14 @@ const categories = [
   'Utilities',
   'Shopping',
   'Healthcare',
-  'Income',
+  'Education',
+  'Insurance',
+  'Travel',
+  'Savings',
+  'Investments',
+  'Charity',
+  'Personal Care',
+  'Miscellaneous',
 ];
 
 const transactionTypes = ['Income', 'Expense'];

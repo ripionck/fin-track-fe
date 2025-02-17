@@ -22,7 +22,7 @@ export default function Login() {
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/auth/login',
+        'http://localhost:5000/api/users/login',
         formData,
       );
 
@@ -30,7 +30,6 @@ export default function Login() {
         console.log('Login successful:', response);
 
         localStorage.setItem('token', response.data.token);
-        localStorage.setItem('refreshToken', response.data.refreshToken);
 
         navigate('/overview');
       } else {
