@@ -1,7 +1,7 @@
-import axios from 'axios';
 import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { post } from '../api/api';
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -65,14 +65,17 @@ export default function Register() {
     }
 
     try {
-      const response = await axios.post(
-        'https://fin-track-api-silk.vercel.app/api/auth/register',
-        formData,
-      );
-      console.log('Registration successful:', response.data);
-      setSuccess('Registration successful!');
+      const response = await post('/auth/register', {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+      });
 
-      // Clear form data
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('refreshToken', response.refreshToken);
+
+      setSuccess('Registration successful! Redirecting to login...');
       setFormData({
         firstName: '',
         lastName: '',
@@ -81,15 +84,12 @@ export default function Register() {
         confirmPassword: '',
       });
 
-      // Redirect to login page after 2 seconds
       setTimeout(() => {
         navigate('/login');
       }, 2000);
     } catch (err) {
       console.error('Registration failed:', err);
-      setError(
-        err.response?.data?.message || 'Registration failed. Please try again.',
-      );
+      setError(err.message || 'Registration failed. Please try again.');
     }
   };
 

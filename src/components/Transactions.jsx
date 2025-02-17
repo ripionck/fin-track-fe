@@ -1,11 +1,16 @@
 import { Plus, X } from 'lucide-react';
 import { useState } from 'react';
-import {
-  categories,
-  dateRanges,
-  transactions,
-  transactionTypes,
-} from '../data';
+import { categories, transactions } from '../data';
+
+const transactionTypes = ['Income', 'Expense'];
+
+const dateRanges = [
+  'Last 7 days',
+  'Last 30 days',
+  'This month',
+  'Last month',
+  'This year',
+];
 
 export default function Transactions() {
   const [showAddModal, setShowAddModal] = useState(false);

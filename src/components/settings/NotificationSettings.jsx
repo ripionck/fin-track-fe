@@ -14,7 +14,7 @@ export default function NotificationSettings() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-2xl ml-8">
       <h2 className="text-2xl font-bold">Notification Settings</h2>
 
       <div className="space-y-4">

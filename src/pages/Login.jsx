@@ -1,7 +1,8 @@
-import axios from 'axios';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { post } from '../api/api'; // Changed import
+
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -9,7 +10,7 @@ export default function Login() {
     password: '',
   });
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,22 +21,20 @@ export default function Login() {
     setError(null);
 
     try {
-      const response = await axios.post(
-        'https://fin-track-api-silk.vercel.app/api/auth/login',
-        formData,
-      );
-      console.log('Login successful:', response.data);
+      // Use the post method from API helper
+      const response = await post('/auth/login', formData);
 
-      // Save the token to localStorage or context (for authentication)
-      localStorage.setItem('token', response.data.token);
+      console.log('Login successful:', response);
 
-      // Redirect to the dashboard or home page
+      // Store tokens
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('refreshToken', response.refreshToken);
+
+      // Redirect to dashboard
       navigate('/dashboard');
     } catch (err) {
       console.error('Login failed:', err);
-      setError(
-        err.response?.data?.message || 'Login failed. Please try again.',
-      );
+      setError(err.message || 'Login failed. Please check your credentials.');
     }
   };
 
@@ -94,21 +93,21 @@ export default function Login() {
 
           <button
             type="submit"
-            className="w-full bg-[#1e2e42] hover:bg-[#1e2e42] text-white cursor-pointer py-3 rounded-full"
+            className="w-full bg-[#1e2e42] hover:bg-[#1e2e42]/90 text-white cursor-pointer py-3 rounded-full transition-all"
           >
             Sign in
           </button>
         </form>
 
         <div className="text-center mt-6">
-          <a href="#" className="text-[#1e2e42]">
+          <a href="/forgot-password" className="text-[#1e2e42] hover:underline">
             Forgot password?
           </a>
         </div>
 
         <p className="text-center mt-6 text-gray-600">
           Don&apos;t have an account?
-          <a href="/register" className="text-[#1e2e42] ml-1.5">
+          <a href="/register" className="text-[#1e2e42] ml-1.5 hover:underline">
             Sign up here
           </a>
         </p>

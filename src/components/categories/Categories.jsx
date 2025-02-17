@@ -132,7 +132,7 @@ export default function Categories() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-2xl ml-8">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Custom Categories</h2>
         <button
@@ -141,9 +141,10 @@ export default function Categories() {
             setIsModalOpen(true);
             setError(null);
           }}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="px-6 py-2 flex items-center bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
-          <Plus className="h-5 w-5" />
+          <Plus className="h-5 w-5" />{' '}
+          <span className="ml-1">Add Category</span>
         </button>
       </div>
 
