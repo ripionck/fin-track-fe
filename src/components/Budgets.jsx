@@ -13,7 +13,9 @@ export default function Budgets() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold mb-1">Budget Management</h1>
+          <h1 className="text-xl text-[#1e2e42] font-bold mb-1">
+            Budget Management
+          </h1>
           <p className="text-gray-600">Set and track your monthly budgets</p>
         </div>
         <button
@@ -28,7 +30,9 @@ export default function Budgets() {
       {/* Total Budget Overview */}
       <div className="bg-white p-6 rounded-lg shadow">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Total Monthly Budget</h2>
+          <h2 className="text-xl text-[#1e2e42] font-semibold">
+            Total Monthly Budget
+          </h2>
           <span className="text-2xl font-bold">${totalBudget}</span>
         </div>
         <div className="space-y-2">

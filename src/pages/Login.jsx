@@ -1,7 +1,7 @@
+import axios from 'axios';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { post } from '../api/api'; // Changed import
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,7 +21,10 @@ export default function Login() {
     setError(null);
 
     try {
-      const response = await post('/auth/login', formData);
+      const response = await axios.post(
+        'http://localhost:5000/api/auth/login',
+        formData,
+      );
 
       console.log('Login successful:', response);
 

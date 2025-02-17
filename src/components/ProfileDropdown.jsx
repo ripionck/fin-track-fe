@@ -32,7 +32,7 @@ export default function ProfileDropdown({
         aria-controls="profile-menu"
       >
         <img
-          src="/placeholder-user.jpg"
+          src="/default.png"
           className="w-9 h-9 rounded-full"
           alt="User profile"
         />

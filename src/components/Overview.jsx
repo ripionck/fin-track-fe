@@ -17,7 +17,9 @@ export default function Overview() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold mb-1">Financial Overview</h1>
+        <h1 className="text-xl text-[#1e2e42] font-bold mb-1">
+          Financial Overview
+        </h1>
         <p className="text-gray-600">Your financial summary for this month</p>
       </div>
 
@@ -69,7 +71,9 @@ export default function Overview() {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4">Income vs Expenses</h3>
+          <h3 className="text-lg text-[#1e2e42] font-semibold mb-4">
+            Income vs Expenses
+          </h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={monthlyData}>
               <XAxis dataKey="month" />
@@ -83,7 +87,9 @@ export default function Overview() {
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4">Spending by Category</h3>
+          <h3 className="text-lg text-[#1e2e42] font-semibold mb-4">
+            Spending by Category
+          </h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -107,7 +113,9 @@ export default function Overview() {
       {/* Recent Transactions */}
       <div className="bg-white p-6 rounded-lg shadow">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold">Recent Transactions</h3>
+          <h3 className="text-lg text-[#1e2e42] font-semibold">
+            Recent Transactions
+          </h3>
           <a href="#" className="text-blue-500 text-sm">
             View All
           </a>

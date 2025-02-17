@@ -1,4 +1,3 @@
-// App.js
 import {
   Navigate,
   Route,

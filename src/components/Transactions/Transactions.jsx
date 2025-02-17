@@ -1,7 +1,7 @@
+import axios from 'axios';
 import { Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { del, get, post, put } from '../../api/api';
 import AddTransactionModal from './AddTransactionModal';
 import TransactionFilters from './TransactionFilters';
 import TransactionTable from './TransactionTable';
@@ -21,56 +21,77 @@ export default function Transactions() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  // Function to get token from localStorage
+  const getToken = () => {
+    return localStorage.getItem('token');
+  };
+
+  // Axios instance for authenticated requests
+  const authAxios = axios.create({
+    baseURL: 'http://localhost:5000/api',
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+
+  // Axios instance for unauthenticated requests
+  const publicAxios = axios.create({
+    baseURL: 'http://localhost:5000/api',
+  });
+
   useEffect(() => {
     const loadData = async () => {
       try {
         const [transactionsRes, categoriesRes] = await Promise.all([
-          get('/transactions'),
-          get('/categories'),
+          authAxios.get('/transactions'),
+          publicAxios.get('/categories'), // No token required
         ]);
 
-        // Add null checks and default to empty arrays
-        setTransactions(Array.isArray(transactionsRes) ? transactionsRes : []);
-        setCategories(Array.isArray(categoriesRes) ? categoriesRes : []);
+        // Null checks and default to empty arrays
+        setTransactions(transactionsRes.data ? transactionsRes.data : []);
+        setCategories(categoriesRes.data ? categoriesRes.data : []);
       } catch (error) {
-        setError(error.message || 'Failed to load data');
+        setError(error.response?.data?.message || 'Failed to load data');
         if (error.response?.status === 401) navigate('/login');
       } finally {
         setLoading(false);
       }
     };
+
     loadData();
   }, [navigate]);
 
   const handleAddTransaction = async (newTransaction) => {
     try {
-      const created = await post('/transactions', newTransaction);
-      setTransactions([created, ...transactions]);
+      const response = await authAxios.post('/transactions', newTransaction);
+      setTransactions([response.data, ...transactions]);
     } catch (error) {
-      setError(error.message || 'Failed to add transaction');
+      setError(error.response?.data?.message || 'Failed to add transaction');
     }
   };
 
   const handleUpdateTransaction = async (updatedTransaction) => {
     try {
-      const updated = await put(
+      const response = await authAxios.put(
         `/transactions/${updatedTransaction.id}`,
         updatedTransaction,
       );
       setTransactions(
-        transactions.map((t) => (t.id === updated.id ? updated : t)),
+        transactions.map((t) =>
+          t.id === response.data.id ? response.data : t,
+        ),
       );
     } catch (error) {
-      setError(error.message || 'Failed to update transaction');
+      setError(error.response?.data?.message || 'Failed to update transaction');
     }
   };
 
   const handleDeleteTransaction = async (id) => {
     try {
-      await del(`/transactions/${id}`);
+      await authAxios.delete(`/transactions/${id}`);
       setTransactions(transactions.filter((t) => t.id !== id));
     } catch (error) {
-      setError(error.message || 'Failed to delete transaction');
+      setError(error.response?.data?.message || 'Failed to delete transaction');
     }
   };
 
@@ -80,6 +101,7 @@ export default function Transactions() {
   };
 
   const filteredTransactions = applyFilters(transactions, filters);
+
   const totalAmount = filteredTransactions.reduce(
     (sum, t) => sum + (t.type === 'Income' ? t.amount : -t.amount),
     0,
@@ -93,7 +115,7 @@ export default function Transactions() {
     <div className="space-y-6 p-4">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold">Transactions</h1>
+          <h1 className="text-2xl text-[#1e2e42] font-bold">Transactions</h1>
           <p className="text-gray-600">
             Manage and track your financial transactions
           </p>
@@ -109,13 +131,11 @@ export default function Transactions() {
           <span>Add Transaction</span>
         </button>
       </div>
-
       <TransactionFilters
         filters={filters}
         setFilters={setFilters}
         categories={categories}
       />
-
       <div className="bg-white rounded-lg shadow overflow-x-auto">
         <TransactionTable
           transactions={filteredTransactions}
@@ -123,7 +143,6 @@ export default function Transactions() {
           onDelete={handleDeleteTransaction}
         />
       </div>
-
       <div className="text-right text-lg font-bold">
         Net Balance:{' '}
         <span
@@ -135,7 +154,6 @@ export default function Transactions() {
           }).format(totalAmount)}
         </span>
       </div>
-
       {showAddModal && (
         <AddTransactionModal
           onClose={() => setShowAddModal(false)}
@@ -150,9 +168,8 @@ export default function Transactions() {
   );
 }
 
-// Update the applyFilters function to handle null/undefined
+// Filter function
 const applyFilters = (transactions, filters) => {
-  // Add null check and default to empty array
   let filtered = [...(transactions || [])];
   const now = new Date();
 

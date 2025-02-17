@@ -32,7 +32,9 @@ export default function Analytics() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold mb-1">Analytics Dashboard</h1>
+        <h1 className="text-xl text-[#1e2e42] font-bold mb-1">
+          Analytics Dashboard
+        </h1>
         <p className="text-gray-600">
           Detailed analysis of your spending patterns
         </p>

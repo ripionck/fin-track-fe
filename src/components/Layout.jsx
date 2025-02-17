@@ -9,9 +9,9 @@ import {
   Wallet2,
 } from 'lucide-react';
 
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { get } from '../api/api';
 import Sidebar from './Sidebar';
 
 export default function Layout() {
@@ -22,11 +22,19 @@ export default function Layout() {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
+      const token = localStorage.getItem('token');
       try {
-        const response = await get('/users/profile');
+        const response = await axios.get(
+          'http://localhost:5000/api/users/profile',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
         setUserProfile({
-          name: `${response.firstName} ${response.lastName}`,
-          email: response.email,
+          name: `${response.data.user.firstName} ${response.data.user.lastName}`,
+          email: response.data.user.email,
         });
       } catch (error) {
         console.error('Failed to fetch profile:', error);

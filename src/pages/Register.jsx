@@ -1,7 +1,7 @@
+import axios from 'axios';
 import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { post } from '../api/api';
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -65,12 +65,15 @@ export default function Register() {
     }
 
     try {
-      const response = await post('/auth/register', {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        password: formData.password,
-      });
+      const response = await axios.post(
+        'http://localhost:5000/api/auth/register',
+        {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+        },
+      );
 
       localStorage.setItem('token', response.token);
       localStorage.setItem('refreshToken', response.refreshToken);

@@ -15,7 +15,7 @@ export default function Sidebar({
     <aside className="w-64 bg-white p-6 shadow-lg flex flex-col justify-between border-r border-gray-200">
       <div>
         <Link to="/home" className="block mb-8">
-          <h1 className="text-2xl ml-4 font-bold text-gray-800">FinTrack</h1>
+          <h1 className="text-2xl ml-4 font-bold text-[#1e2e42]">FinTrack</h1>
         </Link>
         <nav className="space-y-1">
           {navItems.map(({ id, icon: Icon, label, path }) => (
@@ -30,7 +30,7 @@ export default function Sidebar({
                   }`}
             >
               <Icon size={20} className="shrink-0" />
-              <span className="text-sm font-medium">{label}</span>
+              <span className="text-md font-medium">{label}</span>
             </button>
           ))}
         </nav>
