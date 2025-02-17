@@ -14,7 +14,7 @@ export default function Sidebar({
   return (
     <aside className="w-64 bg-white p-6 shadow-lg flex flex-col justify-between border-r border-gray-200">
       <div>
-        <Link to="/" className="block mb-8">
+        <Link to="/home" className="block mb-8">
           <h1 className="text-2xl ml-4 font-bold text-gray-800">FinTrack</h1>
         </Link>
         <nav className="space-y-1">

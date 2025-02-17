@@ -21,7 +21,6 @@ export default function Login() {
     setError(null);
 
     try {
-      // Use the post method from API helper
       const response = await post('/auth/login', formData);
 
       console.log('Login successful:', response);
@@ -30,8 +29,7 @@ export default function Login() {
       localStorage.setItem('token', response.token);
       localStorage.setItem('refreshToken', response.refreshToken);
 
-      // Redirect to dashboard
-      navigate('/dashboard');
+      navigate('/overview');
     } catch (err) {
       console.error('Login failed:', err);
       setError(err.message || 'Login failed. Please check your credentials.');
