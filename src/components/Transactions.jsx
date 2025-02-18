@@ -2,24 +2,6 @@ import axios from 'axios';
 import { Plus, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-const categories = [
-  'Food',
-  'Rent',
-  'Transportation',
-  'Entertainment',
-  'Utilities',
-  'Shopping',
-  'Healthcare',
-  'Education',
-  'Insurance',
-  'Travel',
-  'Savings',
-  'Investments',
-  'Charity',
-  'Personal Care',
-  'Miscellaneous',
-];
-
 const transactionTypes = ['Income', 'Expense'];
 
 const dateRanges = [
@@ -40,29 +22,72 @@ export default function Transactions() {
     sort: 'Date (Newest)',
   });
   const [formData, setFormData] = useState({
-    date: new Date().toISOString().split('T')[0],
     description: '',
-    category: categories[0],
-    type: transactionTypes[0],
+    category: '',
+    type: '',
     amount: 0,
   });
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    fetchTransactions();
-  }, [filters]);
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    if (categories.length > 0) {
+      fetchTransactions();
+    }
+  }, [filters, categories]);
+
+  const fetchCategories = async () => {
+    setError(null);
+    try {
+      const response = await axios.get('http://localhost:5000/api/categories', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.status !== 200) {
+        throw new Error(
+          `Server returned ${response.status}: ${
+            response.data.message || 'Error fetching categories'
+          }`,
+        );
+      }
+      // Ensure we have valid categories array
+      const receivedCategories = Array.isArray(response.data)
+        ? response.data
+        : [];
+
+      setCategories(receivedCategories);
+
+      // Set initial category in form data to first category's ID
+      if (receivedCategories.length > 0) {
+        setFormData((prevForm) => ({
+          ...prevForm,
+          category: receivedCategories[0]._id,
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      setError('Failed to fetch categories. Please try again.');
+    }
+  };
 
   const fetchTransactions = async () => {
     setLoading(true);
     setError(null);
     try {
+      const startDate = getStartDate(filters.dateRange);
+      const endDate = new Date().toISOString();
+
       const params = {
         ...filters,
-        startDate: getStartDate(filters.dateRange),
-        endDate: new Date().toISOString().split('T')[0],
+        startDate: startDate,
+        endDate: endDate,
       };
 
       const response = await axios.get(
@@ -73,15 +98,16 @@ export default function Transactions() {
         },
       );
 
-      // Ensure we're getting an array from the API
-      const data = Array.isArray(response.data)
-        ? response.data
-        : response.data.data || [];
-      setTransactions(data);
+      setTransactions(
+        (response.data.data || []).map((transaction) => ({
+          ...transaction,
+          type: String(transaction.type).toLowerCase(),
+        })),
+      );
     } catch (error) {
       console.error('Error fetching transactions:', error);
       setError('Failed to fetch transactions. Please try again.');
-      setTransactions([]); // Reset to empty array on error
+      setTransactions([]);
     } finally {
       setLoading(false);
     }
@@ -110,7 +136,7 @@ export default function Transactions() {
       default:
         date.setDate(date.getDate() - 7);
     }
-    return date.toISOString().split('T')[0];
+    return date.toISOString();
   };
 
   const handleInputChange = (e) => {
@@ -216,8 +242,10 @@ export default function Transactions() {
     transactions.filter((transaction) => {
       return (
         (filters.category === 'All Categories' ||
-          transaction.category === filters.category) &&
-        (filters.type === 'All Types' || transaction.type === filters.type)
+          (transaction.category &&
+            transaction.category._id === filters.category)) &&
+        (filters.type === 'All Types' ||
+          String(transaction.type).toLowerCase() === filters.type.toLowerCase())
       );
     }),
   );
@@ -265,8 +293,8 @@ export default function Transactions() {
         >
           <option value="All Categories">All Categories</option>
           {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
+            <option key={category._id} value={category._id}>
+              {category.name}
             </option>
           ))}
         </select>
@@ -316,13 +344,15 @@ export default function Transactions() {
                   {new Date(transaction.date).toLocaleDateString()}
                 </td>
                 <td className="px-6 py-4">{transaction.description}</td>
-                <td className="px-6 py-4">{transaction.category}</td>
                 <td className="px-6 py-4">
+                  {transaction.category && transaction.category.name}
+                </td>
+                <td className="px-1 py-4">
                   <span
-                    className={`px-2 py-1 rounded-full text-sm ${
-                      transaction.type === 'Income'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
+                    className={`px-6 py-4 text-right ${
+                      String(transaction.type).toLowerCase() === 'income'
+                        ? 'text-green-600'
+                        : 'text-red-600'
                     }`}
                   >
                     {transaction.type}
@@ -330,14 +360,17 @@ export default function Transactions() {
                 </td>
                 <td
                   className={`px-6 py-4 text-right ${
-                    transaction.type === 'Income'
+                    String(transaction.type).toLowerCase() === 'income'
                       ? 'text-green-600'
                       : 'text-red-600'
                   }`}
                 >
-                  {transaction.type === 'Income' ? '+' : '-'}$
-                  {Math.abs(transaction.amount).toFixed(2)}
+                  {String(transaction.type).toLowerCase() === 'income'
+                    ? '+'
+                    : '-'}
+                  ${Math.abs(transaction.amount).toFixed(2)}
                 </td>
+
                 <td className="px-6 py-4">
                   <div className="flex space-x-2">
                     <button
@@ -407,36 +440,60 @@ export default function Transactions() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Category
                 </label>
-                <select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded-lg"
-                >
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
+                {formData._id ? (
+                  <input
+                    type="text"
+                    value={
+                      categories.find(
+                        (cat) => cat._id === formData.category?._id,
+                      )?.name || ''
+                    }
+                    readOnly
+                    className="w-full p-2 border rounded-lg bg-gray-100"
+                  />
+                ) : (
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border rounded-lg"
+                    required
+                  >
+                    {categories.map((category) => (
+                      <option key={category._id} value={category._id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Type
                 </label>
-                <select
-                  name="type"
-                  value={formData.type}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded-lg"
-                >
-                  {transactionTypes.map((type) => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))}
-                </select>
+                {formData._id ? (
+                  <input
+                    type="text"
+                    value={formData.type}
+                    readOnly
+                    className="w-full p-2 border rounded-lg bg-gray-100"
+                  />
+                ) : (
+                  <select
+                    name="type"
+                    value={formData.type}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border rounded-lg"
+                    required
+                  >
+                    {transactionTypes.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               <div>

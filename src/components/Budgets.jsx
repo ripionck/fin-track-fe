@@ -2,40 +2,55 @@ import axios from 'axios';
 import { Pencil, Plus, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-const categories = {
-  Food: 'bg-yellow-500',
-  Rent: 'bg-blue-500',
-  Transportation: 'bg-orange-500',
-  Entertainment: 'bg-pink-500',
-  Utilities: 'bg-purple-500',
-  Shopping: 'bg-red-500',
-  Healthcare: 'bg-green-500',
-  Education: 'bg-indigo-500',
-  Insurance: 'bg-teal-500',
-  Travel: 'bg-cyan-500',
-  Savings: 'bg-emerald-500',
-  Investments: 'bg-lime-500',
-  Charity: 'bg-rose-500',
-  'Personal Care': 'bg-fuchsia-500',
-  Miscellaneous: 'bg-gray-500',
-};
-
 export default function Budgets() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [budgets, setBudgets] = useState([]);
-  const [editingBudget, setEditingBudget] = useState(null);
   const [newBudget, setNewBudget] = useState({
-    category: categories[0],
+    category: '',
     limit: 0,
     startDate: new Date().toISOString().split('T')[0],
   });
+  const [editingBudget, setEditingBudget] = useState({
+    category: '',
+    categoryName: '',
+    limit: 0,
+  });
+  const [categories, setCategories] = useState([]);
 
   const token = localStorage.getItem('token');
 
   useEffect(() => {
+    fetchCategories();
     fetchBudgets();
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/categories', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.status !== 200) {
+        throw new Error(
+          `Server returned ${response.status}: ${
+            response.data.message || 'Error fetching categories'
+          }`,
+        );
+      }
+
+      if (!Array.isArray(response.data)) {
+        throw new Error('Invalid response: Expected an array of categories');
+      }
+
+      setCategories(response.data);
+      if (response.data.length > 0) {
+        setNewBudget({ ...newBudget, category: response.data[0]._id });
+      }
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
 
   const fetchBudgets = async () => {
     try {
@@ -43,6 +58,7 @@ export default function Budgets() {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBudgets(response.data || []);
+      console.log(response.data);
     } catch (error) {
       console.error('Error fetching budgets:', error);
     }
@@ -79,7 +95,10 @@ export default function Budgets() {
     try {
       await axios.put(
         `http://localhost:5000/api/budgets/${editingBudget._id}`,
-        editingBudget,
+        {
+          category: editingBudget.category,
+          limit: editingBudget.limit,
+        },
         { headers: { Authorization: `Bearer ${token}` } },
       );
       setShowEditModal(false);
@@ -115,7 +134,11 @@ export default function Budgets() {
 
   // Open edit modal
   const openEditModal = (budget) => {
-    setEditingBudget(budget);
+    const foundCategory = categories.find((cat) => cat._id === budget.category);
+    setEditingBudget({
+      ...budget,
+      categoryName: foundCategory?.name || 'Unknown Category',
+    });
     setShowEditModal(true);
   };
 
@@ -162,15 +185,19 @@ export default function Budgets() {
       {/* Budget Categories */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {budgets.map((budget) => {
-          const progress = (budget.spent / budget.limit) * 100;
+          const progress =
+            budget.limit > 0 ? (budget.spent / budget.limit) * 100 : 0;
+          const safeProgress = Math.min(progress, 100);
           const remaining = budget.limit - budget.spent;
-          const safeProgress = Math.min(progress, 100); // Prevent overflow
           // const progressColor = remaining >= 0 ? 'bg-green-500' : 'bg-red-500';
 
           return (
             <div key={budget._id} className="bg-white p-6 rounded-lg shadow">
               <div className="flex justify-between items-start mb-4">
-                <h3 className="text-lg font-semibold">{budget.category}</h3>
+                <h3 className="text-lg font-semibold">
+                  {categories.find((cat) => cat._id === budget.category)
+                    ?.name || 'Unknown Category'}
+                </h3>
                 <div className="flex space-x-2">
                   <button
                     onClick={() => openEditModal(budget)}
@@ -196,18 +223,17 @@ export default function Budgets() {
                 </div>
 
                 {/* Progress Bar Container */}
-                <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all duration-300 ${
-                      categories[budget.category] || 'bg-gray-400'
+                      categories.find((cat) => cat._id === budget.category)
+                        ?.color || 'bg-gray-400'
                     }`}
                     style={{
                       width: `${safeProgress}%`,
-                      minWidth: safeProgress > 0 ? '2%' : '0%',
                     }}
                   />
                 </div>
-
                 <div className="flex justify-between text-sm">
                   <span>Monthly Limit</span>
                   <span className="font-medium">
@@ -247,18 +273,12 @@ export default function Budgets() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Category
                 </label>
-                <select
-                  name="category"
-                  className="w-full p-2 border rounded-lg"
-                  value={editingBudget?.category}
-                  onChange={handleEditInputChange}
-                >
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
+                <input
+                  type="text"
+                  className="w-full p-2 border rounded-lg bg-gray-100"
+                  value={editingBudget.categoryName}
+                  readOnly
+                />
               </div>
 
               <div>
@@ -269,7 +289,7 @@ export default function Budgets() {
                   type="number"
                   name="limit"
                   className="w-full p-2 border rounded-lg"
-                  value={editingBudget?.limit}
+                  value={editingBudget.limit || ''}
                   onChange={handleEditInputChange}
                   required
                 />
@@ -320,8 +340,8 @@ export default function Budgets() {
                   }
                 >
                   {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
+                    <option key={category._id} value={category._id}>
+                      {category.name}
                     </option>
                   ))}
                 </select>
