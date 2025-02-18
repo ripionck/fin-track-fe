@@ -7,7 +7,6 @@ import {
 import Analytics from './components/Analytics';
 import Budgets from './components/Budgets';
 import Layout from './components/Layout';
-import NotFound from './components/NotFound';
 import Overview from './components/Overview';
 import Categories from './components/settings/Categories';
 import Notifications from './components/settings/Notifications';
@@ -16,6 +15,7 @@ import ProfileSettings from './components/settings/ProfileSettings';
 import Transactions from './components/Transactions';
 import GetStarted from './pages/GetStarted';
 import Login from './pages/Login';
+import NotFound from './pages/NotFound';
 import Register from './pages/Register';
 
 export default function App() {

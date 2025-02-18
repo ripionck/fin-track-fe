@@ -1,4 +1,12 @@
-import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+
+const api = axios.create({
+  baseURL: 'http://localhost:5000/api',
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
+  },
+});
 
 export default function Preferences() {
   const [preferences, setPreferences] = useState({
@@ -7,6 +15,7 @@ export default function Preferences() {
     compactView: false,
     language: 'en',
     startOfWeek: 'sunday',
+    currency: 'USD',
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -16,23 +25,14 @@ export default function Preferences() {
   useEffect(() => {
     const fetchPreferences = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/preferences', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-
-        if (!response.ok) throw new Error('Failed to fetch preferences');
-
-        const data = await response.json();
-        setPreferences(data);
+        const response = await api.get('/preferences');
+        setPreferences(response.data);
       } catch (error) {
-        setError(error.message);
+        setError(error.response?.data?.error || error.message);
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchPreferences();
   }, []);
 
@@ -41,8 +41,8 @@ export default function Preferences() {
     setPreferences((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleToggle = (name) => {
-    setPreferences((prev) => ({ ...prev, [name]: !prev[name] }));
+  const handleToggle = () => {
+    setPreferences((prev) => ({ ...prev, compactView: !prev.compactView }));
   };
 
   const handleSubmit = async (e) => {
@@ -52,24 +52,11 @@ export default function Preferences() {
     setSuccess(false);
 
     try {
-      const response = await fetch('http://localhost:5000/api/preferences', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(preferences),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update preferences');
-      }
-
+      await api.put('/preferences', preferences);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (error) {
-      setError(error.message);
+      setError(error.response?.data?.error || error.message);
     } finally {
       setIsSaving(false);
     }
@@ -94,6 +81,7 @@ export default function Preferences() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Theme Selection */}
         <div>
           <label
             htmlFor="theme"

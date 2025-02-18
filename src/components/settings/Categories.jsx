@@ -6,7 +6,7 @@ export default function Categories() {
   const [categories, setCategories] = useState([]);
   const [newCategory, setNewCategory] = useState({
     name: '',
-    color: 'bg-orange-500',
+    color: '#6b7280',
     icon: '🍔',
   });
   const [error, setError] = useState(null);
@@ -58,8 +58,7 @@ export default function Categories() {
       );
 
       await fetchCategories();
-
-      setNewCategory({ name: '', color: 'bg-gray-500', icon: '📌' });
+      setNewCategory({ name: '', color: '#6b7280', icon: '🍔' });
     } catch (error) {
       console.error('Error adding category:', error);
       setError('Error adding category. Please check your input and try again.');
@@ -100,23 +99,23 @@ export default function Categories() {
   ];
 
   const colorOptions = {
-    Gray: 'bg-gray-500',
-    Amber: 'bg-amber-500',
-    Red: 'bg-red-500',
-    Yellow: 'bg-yellow-500',
-    Lime: 'bg-lime-500',
-    Green: 'bg-green-500',
-    Orange: 'bg-orange-500',
-    Emerald: 'bg-emerald-500',
-    Purple: 'bg-purple-500',
-    Blue: 'bg-blue-500',
-    Cyan: 'bg-cyan-500',
-    Violet: 'bg-violet-500',
-    Teal: 'bg-teal-500',
-    Indigo: 'bg-indigo-500',
-    Fuchsia: 'bg-fuchsia-500',
-    Sky: 'bg-sky-500',
-    Slate: 'bg-slate-500',
+    '#6b7280': 'Gray',
+    '#f59e0b': 'Amber',
+    '#ef4444': 'Red',
+    '#eab308': 'Yellow',
+    '#84cc16': 'Lime',
+    '#22c55e': 'Green',
+    '#f97316': 'Orange',
+    '#10b981': 'Emerald',
+    '#a855f7': 'Purple',
+    '#3b82f6': 'Blue',
+    '#06b6d4': 'Cyan',
+    '#8b5cf6': 'Violet',
+    '#14b8a6': 'Teal',
+    '#6366f1': 'Indigo',
+    '#d946ef': 'Fuchsia',
+    '#0ea5e9': 'Sky',
+    '#64748b': 'Slate',
   };
 
   return (
@@ -151,7 +150,7 @@ export default function Categories() {
             }
             className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
-            {Object.entries(colorOptions).map(([name, value]) => (
+            {Object.entries(colorOptions).map(([value, name]) => (
               <option key={value} value={value}>
                 {name}
               </option>
@@ -188,7 +187,8 @@ export default function Categories() {
             >
               <div className="flex items-center space-x-4">
                 <span
-                  className={`w-8 h-8 ${category.color} rounded-full flex items-center justify-center text-white`}
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-white"
+                  style={{ backgroundColor: category.color }}
                 >
                   {category.icon}
                 </span>

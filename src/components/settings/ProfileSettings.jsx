@@ -84,36 +84,31 @@ export default function ProfileSettings() {
   };
 
   const handleAvatarChange = async (e) => {
-    if (!e.target.files || !e.target.files[0]) return;
-
     try {
       const file = e.target.files[0];
+      if (!file) return;
+
+      // Client-side validation
+      if (!file.type.startsWith('image/')) {
+        setError('Only image files allowed');
+        return;
+      }
+
       const formData = new FormData();
       formData.append('avatar', file);
 
-      // Clear previous error/success messages
-      setError('');
-      setSuccess('');
+      const response = await api.put('/users/me/avatar', formData);
 
-      const response = await api.post('/users/me/avatar', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      // Ensure the response contains the full URL path
       setProfileData((prev) => ({
         ...prev,
-        avatar: response.data.avatar || '/placeholder-user.jpg',
+        avatar: response.data.avatar,
       }));
-      setSuccess('Avatar updated successfully');
-
-      // Force refresh if the image is cached
-      e.target.value = null;
+      setSuccess('Avatar updated!');
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to update avatar');
+      setError(err.response?.data?.error || 'Upload failed');
     }
   };
+
   const handleDeleteAccount = async () => {
     if (
       window.confirm(
@@ -122,7 +117,6 @@ export default function ProfileSettings() {
     ) {
       try {
         await api.delete('/users/me');
-        // Redirect to login or home page after deletion
         localStorage.removeItem('token');
         Navigate('/login');
       } catch (err) {
@@ -220,6 +214,7 @@ export default function ProfileSettings() {
             type="email"
             id="email"
             name="email"
+            readOnly
             value={profileData.email}
             onChange={handleInputChange}
             className="mt-1 py-1.5 px-3 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"

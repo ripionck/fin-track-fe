@@ -166,12 +166,12 @@ export default function Budgets() {
           <h2 className="text-xl text-[#1e2e42] font-semibold">
             Total Monthly Budget
           </h2>
-          <span className="text-2xl font-bold">${totalBudget}</span>
+          <span className="text-2xl font-bold">${totalBudget.toFixed(2)}</span>
         </div>
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span>Spent: ${spent}</span>
-            <span>Remaining: ${remaining}</span>
+            <span>Spent: ${spent.toFixed(2)}</span>
+            <span>Remaining: ${remaining.toFixed(2)}</span>
           </div>
           <div className="h-2 bg-gray-200 rounded-full">
             <div
@@ -225,11 +225,12 @@ export default function Budgets() {
                 {/* Progress Bar Container */}
                 <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
                   <div
-                    className={`h-full rounded-full transition-all duration-300 ${
-                      categories.find((cat) => cat._id === budget.category)
-                        ?.color || 'bg-gray-400'
-                    }`}
+                    className={`h-full rounded-full transition-all duration-300 `}
                     style={{
+                      backgroundColor: `${
+                        categories.find((cat) => cat._id === budget.category)
+                          ?.color || '#6b7280'
+                      }`,
                       width: `${safeProgress}%`,
                     }}
                   />

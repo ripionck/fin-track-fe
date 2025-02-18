@@ -26,6 +26,7 @@ export default function Transactions() {
     category: '',
     type: '',
     amount: 0,
+    date: new Date().toLocaleDateString('en-CA'),
   });
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -50,21 +51,11 @@ export default function Transactions() {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (response.status !== 200) {
-        throw new Error(
-          `Server returned ${response.status}: ${
-            response.data.message || 'Error fetching categories'
-          }`,
-        );
-      }
-      // Ensure we have valid categories array
       const receivedCategories = Array.isArray(response.data)
         ? response.data
         : [];
-
       setCategories(receivedCategories);
 
-      // Set initial category in form data to first category's ID
       if (receivedCategories.length > 0) {
         setFormData((prevForm) => ({
           ...prevForm,
@@ -77,17 +68,77 @@ export default function Transactions() {
     }
   };
 
+  const getStartDate = (range) => {
+    const now = new Date();
+    const date = new Date(now);
+
+    switch (range) {
+      case 'Last 7 days':
+        date.setUTCDate(now.getUTCDate() - 6);
+        break;
+      case 'Last 30 days':
+        date.setUTCDate(now.getUTCDate() - 29);
+        break;
+      case 'This month':
+        date.setUTCDate(1);
+        break;
+      case 'Last month':
+        date.setUTCMonth(now.getUTCMonth() - 1);
+        date.setUTCDate(1);
+        break;
+      case 'This year':
+        date.setUTCMonth(0);
+        date.setUTCDate(1);
+        break;
+      default:
+        date.setUTCDate(now.getUTCDate() - 6);
+    }
+
+    date.setUTCHours(0, 0, 0, 0);
+    return date.toISOString();
+  };
+
+  const getEndDate = (range) => {
+    const now = new Date();
+    const date = new Date(now);
+
+    switch (range) {
+      case 'Last month':
+        // Set to last day of previous month
+        date.setUTCMonth(now.getUTCMonth());
+        date.setUTCDate(0);
+        break;
+      case 'This month':
+        // Last day of current month
+        date.setUTCMonth(now.getUTCMonth() + 1, 0);
+        break;
+      case 'This year':
+        // Last day of current year
+        date.setUTCMonth(11, 31);
+        break;
+      default:
+        // Current date for other ranges
+        date.setUTCHours(23, 59, 59, 999);
+    }
+
+    date.setUTCHours(23, 59, 59, 999);
+    return date.toISOString();
+  };
+
+  // Update the fetchTransactions function
   const fetchTransactions = async () => {
     setLoading(true);
     setError(null);
     try {
       const startDate = getStartDate(filters.dateRange);
-      const endDate = new Date().toISOString();
+      const endDate = getEndDate(filters.dateRange);
 
       const params = {
-        ...filters,
-        startDate: startDate,
-        endDate: endDate,
+        startDate,
+        endDate,
+        category: filters.category === 'All Categories' ? '' : filters.category,
+        type: filters.type === 'All Types' ? '' : filters.type,
+        sort: filters.sort,
       };
 
       const response = await axios.get(
@@ -101,7 +152,7 @@ export default function Transactions() {
       setTransactions(
         (response.data.data || []).map((transaction) => ({
           ...transaction,
-          type: String(transaction.type).toLowerCase(),
+          type: transaction.type.toLowerCase(),
         })),
       );
     } catch (error) {
@@ -113,42 +164,22 @@ export default function Transactions() {
     }
   };
 
-  const getStartDate = (range) => {
-    const date = new Date();
-    switch (range) {
-      case 'Last 7 days':
-        date.setDate(date.getDate() - 7);
-        break;
-      case 'Last 30 days':
-        date.setDate(date.getDate() - 30);
-        break;
-      case 'This month':
-        date.setDate(1);
-        break;
-      case 'Last month':
-        date.setMonth(date.getMonth() - 1);
-        date.setDate(1);
-        break;
-      case 'This year':
-        date.setMonth(0);
-        date.setDate(1);
-        break;
-      default:
-        date.setDate(date.getDate() - 7);
-    }
-    return date.toISOString();
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if (name === 'date') {
+      const localDate = new Date(value + 'T00:00:00');
+      const isoDate = localDate.toISOString();
+      setFormData({ ...formData, [name]: isoDate });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const resetFormData = () => {
     setFormData({
-      date: new Date().toISOString().split('T')[0],
+      date: new Date().toLocaleDateString('en-CA'),
       description: '',
-      category: categories[0],
+      category: categories[0]?._id || '',
       type: transactionTypes[0],
       amount: 0,
     });
@@ -167,36 +198,38 @@ export default function Transactions() {
             : Math.abs(formData.amount),
       };
 
-      if (formData._id) {
-        await axios.put(
-          `http://localhost:5000/api/transactions/${formData._id}`,
-          payload,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
-      } else {
-        await axios.post('http://localhost:5000/api/transactions', payload, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      }
+      const url = formData._id
+        ? `http://localhost:5000/api/transactions/${formData._id}`
+        : 'http://localhost:5000/api/transactions';
+
+      const method = formData._id ? 'put' : 'post';
+
+      await axios[method](url, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       setShowAddModal(false);
       resetFormData();
       fetchTransactions();
     } catch (error) {
       console.error('Error saving transaction:', error);
-      setError('Failed to save transaction. Please try again.');
+      setError(
+        error.response?.data?.message ||
+          'Failed to save transaction. Please try again.',
+      );
     } finally {
       setLoading(false);
     }
   };
 
   const handleEdit = (transaction) => {
+    const localDate = new Date(transaction.date);
+    const dateString = localDate.toLocaleDateString('en-CA');
+
     setFormData({
       ...transaction,
       amount: Math.abs(transaction.amount),
-      date: new Date(transaction.date).toISOString().split('T')[0],
+      date: dateString,
     });
     setShowAddModal(true);
   };
@@ -503,7 +536,7 @@ export default function Transactions() {
                 <input
                   type="date"
                   name="date"
-                  value={formData.date}
+                  value={new Date(formData.date).toLocaleDateString('en-CA')}
                   onChange={handleInputChange}
                   className="w-full p-2 border rounded-lg"
                   required
