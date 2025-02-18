@@ -72,11 +72,16 @@ export default function Transactions() {
           params,
         },
       );
-      console.log(response.data);
-      setTransactions(response.data || []);
+
+      // Ensure we're getting an array from the API
+      const data = Array.isArray(response.data)
+        ? response.data
+        : response.data.data || [];
+      setTransactions(data);
     } catch (error) {
       console.error('Error fetching transactions:', error);
       setError('Failed to fetch transactions. Please try again.');
+      setTransactions([]); // Reset to empty array on error
     } finally {
       setLoading(false);
     }
@@ -187,6 +192,7 @@ export default function Transactions() {
   };
 
   const sortTransactions = (data) => {
+    if (!Array.isArray(data)) return [];
     const sortedData = [...data];
     switch (filters.sort) {
       case 'Date (Newest)':
