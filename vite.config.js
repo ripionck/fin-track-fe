@@ -6,6 +6,6 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
-    allowedHosts: 'all',
+    allowedHosts: 'fin-track-fe-bhc9.onrender.com',
   },
 });
