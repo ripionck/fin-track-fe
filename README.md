@@ -1,6 +1,6 @@
 # FinTrack - Personal Finance Management Application
 
-![FinTrack Logo](https://via.placeholder.com/150) <!-- Replace with your logo -->
+![FinTrack Logo](https://via.placeholder.com/150) 
 
 FinTrack is a comprehensive personal finance management application designed to help users track their expenses, manage budgets, and gain insights into their financial habits. Built with a modern tech stack, FinTrack offers a responsive and intuitive user interface, real-time transaction tracking, and advanced analytics with interactive charts and graphs.
 
@@ -18,8 +18,6 @@ FinTrack is a comprehensive personal finance management application designed to 
 ## Tech Stack
 
 - **Frontend**: React, Tailwind CSS
-- **Backend**: Express JS
-- **Database**: MongoDB
 - **Charting Library**: Recharts
 
 ## Installation
@@ -28,42 +26,22 @@ To get started with FinTrack, follow these steps:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/FinTrack.git
+   git clone https://github.com/ripionck/FinTrack.git
    cd FinTrack
    ```
 
 2. **Install dependencies**:
    ```bash
-   # Install frontend dependencies
-   cd client
-   npm install
-
-   # Install backend dependencies
-   cd ../server
-   npm install
+   yarn install
    ```
 
-3. **Set up environment variables**:
-   - Create a `.env` file in the `server` directory and add the following variables:
-     ```env
-     MONGO_URI=your_mongodb_connection_string
-     JWT_SECRET=your_jwt_secret_key
-     PORT=5000
-     ```
-
-4. **Run the application**:
+3. **Run the application**:
    ```bash
-   # Start the backend server
-   cd server
-   npm start
-
-   # Start the frontend development server
-   cd ../client
-   npm start
+   yarn dev
    ```
 
-5. **Access the application**:
-   - Open your browser and navigate to `http://localhost:3000`.
+4. **Access the application**:
+   - Open your browser and navigate to `http://localhost:5173`.
 
 ## Usage
 
@@ -98,7 +76,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-For any questions or feedback, please reach out to us at [your-email@example.com](mailto:your-email@example.com).
+For any questions or feedback, please reach out to me at [ripion.chakmar@gmail.com](mailto:ripion.chakmar@gmail.com).
 
 ---
 
