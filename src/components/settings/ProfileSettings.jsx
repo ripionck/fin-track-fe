@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: 'https://fin-track-api-silk.vercel.app/api',
   headers: {
     'Content-Type': 'application/json',
   },

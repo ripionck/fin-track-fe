@@ -66,7 +66,7 @@ export default function Register() {
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/users/register',
+        'https://fin-track-api-silk.vercel.app/api/users/register',
         {
           firstName: formData.firstName,
           lastName: formData.lastName,

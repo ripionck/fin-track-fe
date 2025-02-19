@@ -22,7 +22,7 @@ export default function Login() {
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/users/login',
+        'https://fin-track-api-silk.vercel.app/api/users/login',
         formData,
       );
 

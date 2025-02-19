@@ -47,9 +47,12 @@ export default function Transactions() {
   const fetchCategories = async () => {
     setError(null);
     try {
-      const response = await axios.get('http://localhost:5000/api/categories', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        'https://fin-track-api-silk.vercel.app/api/categories',
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       const receivedCategories = Array.isArray(response.data)
         ? response.data
@@ -142,7 +145,7 @@ export default function Transactions() {
       };
 
       const response = await axios.get(
-        'http://localhost:5000/api/transactions',
+        'https://fin-track-api-silk.vercel.app/api/transactions',
         {
           headers: { Authorization: `Bearer ${token}` },
           params,
@@ -199,8 +202,8 @@ export default function Transactions() {
       };
 
       const url = formData._id
-        ? `http://localhost:5000/api/transactions/${formData._id}`
-        : 'http://localhost:5000/api/transactions';
+        ? `https://fin-track-api-silk.vercel.app/api/transactions/${formData._id}`
+        : 'https://fin-track-api-silk.vercel.app/api/transactions';
 
       const method = formData._id ? 'put' : 'post';
 
@@ -238,9 +241,12 @@ export default function Transactions() {
     setLoading(true);
     setError(null);
     try {
-      await axios.delete(`http://localhost:5000/api/transactions/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `https://fin-track-api-silk.vercel.app/api/transactions/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       fetchTransactions();
     } catch (error) {
       console.error('Error deleting transaction:', error);

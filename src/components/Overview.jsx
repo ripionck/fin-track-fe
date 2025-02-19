@@ -41,7 +41,7 @@ export default function Overview() {
     const fetchData = async () => {
       try {
         const { data: response } = await axios.get(
-          'http://localhost:5000/api/transactions',
+          'https://fin-track-api-silk.vercel.app/api/transactions',
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,

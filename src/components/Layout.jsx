@@ -25,11 +25,14 @@ export default function Layout() {
     const token = localStorage.getItem('token');
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/users/me', {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const response = await axios.get(
+          'https://fin-track-api-silk.vercel.app/api/users/me',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
         setUserProfile({
           name: `${response.data.firstName} ${response.data.lastName}`,
           email: response.data.email,
@@ -82,7 +85,7 @@ export default function Layout() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    navigate('/login');
+    navigate('/');
   };
 
   return (

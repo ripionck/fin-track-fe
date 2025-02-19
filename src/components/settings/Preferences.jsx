@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: 'https://fin-track-api-silk.vercel.app/api',
   headers: {
     Authorization: `Bearer ${localStorage.getItem('token')}`,
   },

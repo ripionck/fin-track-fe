@@ -20,9 +20,12 @@ export default function Categories() {
   const fetchCategories = async () => {
     setError(null);
     try {
-      const response = await axios.get('http://localhost:5000/api/categories', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        'https://fin-track-api-silk.vercel.app/api/categories',
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       if (response.status !== 200) {
         throw new Error(
@@ -52,7 +55,7 @@ export default function Categories() {
 
     try {
       await axios.post(
-        'http://localhost:5000/api/categories',
+        'https://fin-track-api-silk.vercel.app/api/categories',
         { ...newCategory, name: trimmedName },
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -68,9 +71,12 @@ export default function Categories() {
   const deleteCategory = async (id) => {
     setError(null);
     try {
-      await axios.delete(`http://localhost:5000/api/categories/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `https://fin-track-api-silk.vercel.app/api/categories/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       setCategories(categories.filter((category) => category._id !== id));
     } catch (error) {
