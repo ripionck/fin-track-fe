@@ -50,7 +50,7 @@ export default function Analytics() {
       };
 
       const { data } = await axios.get(
-        `http://localhost:5000/api/analytics/${endpointMap[timeRange]}`,
+        `https://fin-track-api-silk.vercel.app/api/analytics/${endpointMap[timeRange]}`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
 

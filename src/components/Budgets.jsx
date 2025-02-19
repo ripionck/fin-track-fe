@@ -27,9 +27,12 @@ export default function Budgets() {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/categories', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        'https://fin-track-api-silk.vercel.app/api/categories',
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       if (response.status !== 200) {
         throw new Error(
@@ -54,9 +57,12 @@ export default function Budgets() {
 
   const fetchBudgets = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/budgets', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        'https://fin-track-api-silk.vercel.app/api/budgets',
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       setBudgets(response.data || []);
       console.log(response.data);
     } catch (error) {
@@ -74,9 +80,13 @@ export default function Budgets() {
   const handleCreateBudget = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/budgets', newBudget, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.post(
+        'https://fin-track-api-silk.vercel.app/api/budgets',
+        newBudget,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       setShowAddModal(false);
       setNewBudget({
         category: categories[0],
@@ -94,7 +104,7 @@ export default function Budgets() {
     e.preventDefault();
     try {
       await axios.put(
-        `http://localhost:5000/api/budgets/${editingBudget._id}`,
+        `https://fin-track-api-silk.vercel.app/api/budgets/${editingBudget._id}`,
         {
           category: editingBudget.category,
           limit: editingBudget.limit,
@@ -111,9 +121,12 @@ export default function Budgets() {
   // Delete budget
   const handleDeleteBudget = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/budgets/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `https://fin-track-api-silk.vercel.app/api/budgets/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       fetchBudgets();
     } catch (error) {
       console.error('Error deleting budget:', error);
