@@ -5,39 +5,39 @@ FinTrack is a comprehensive personal finance management application designed to 
 
 ## Features
 
-- **Real-Time Transaction Tracking**
+ **Real-Time Transaction Tracking**
   - Track income and expenses in real-time.
   - Categorize transactions dynamically for better organization.
 
-- **Budget Management**
+ **Budget Management**
   - Create and manage personalized budgets.
   - Monitor spending against budgets with visual indicators.
 
-- **Advanced Analytics**
+ **Advanced Analytics**
   - Interactive charts and graphs powered by Recharts.
   - Gain insights into spending patterns, savings trends, and more.
 
-- **User Authentication & Profile Customization**
+ **User Authentication & Profile Customization**
   - Secure user authentication system.
   - Customize user profiles with preferences and settings.
 
-- **Dynamic Categorization System**
+ **Dynamic Categorization System**
   - Automatically categorize transactions based on user-defined rules.
   - Easily edit or create new categories for better financial organization.
 
-- **Multi-Currency Support**
+ **Multi-Currency Support**
   - Manage finances in multiple currencies seamlessly.
   - Automatic currency conversion for international transactions.
 
-- **Custom Notifications**
+ **Custom Notifications**
   - Set up reminders for bill payments, budget limits, and other financial milestones.
   - Stay on top of your finances with timely alerts.
 
-- **Personalized User Preferences**
+ **Personalized User Preferences**
   - Tailor the app to suit individual needs with customizable themes and layouts.
   - Save preferences for a personalized experience.
 
-- **Flexible Data Structure**
+ **Flexible Data Structure**
   - Efficiently store and retrieve financial data using MongoDB.
   - Scalable architecture to support future feature enhancements.
 
