@@ -361,7 +361,11 @@ export default function Transactions() {
         </select>
       </div>
 
-      {loading && <p className="text-center">Loading...</p>}
+      {loading && (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      )}
       {error && <p className="text-center text-red-600">{error}</p>}
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
