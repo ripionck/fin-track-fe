@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 const api = axios.create({
-  baseURL: 'https://fin-track-api-silk.vercel.app/api/notifications',
+  baseURL: 'https://fin-track-api-ags1.onrender.com/api/v1/notifications',
   headers: {
     'Content-Type': 'application/json',
   },

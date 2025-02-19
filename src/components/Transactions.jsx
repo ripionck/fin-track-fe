@@ -48,7 +48,7 @@ export default function Transactions() {
     setError(null);
     try {
       const response = await axios.get(
-        'https://fin-track-api-silk.vercel.app/api/categories',
+        'https://fin-track-api-ags1.onrender.com/api/v1/categories',
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -145,7 +145,7 @@ export default function Transactions() {
       };
 
       const response = await axios.get(
-        'https://fin-track-api-silk.vercel.app/api/transactions',
+        'https://fin-track-api-ags1.onrender.com/api/v1/transactions',
         {
           headers: { Authorization: `Bearer ${token}` },
           params,
@@ -202,8 +202,8 @@ export default function Transactions() {
       };
 
       const url = formData._id
-        ? `https://fin-track-api-silk.vercel.app/api/transactions/${formData._id}`
-        : 'https://fin-track-api-silk.vercel.app/api/transactions';
+        ? `https://fin-track-api-ags1.onrender.com/api/v1/transactions/${formData._id}`
+        : 'https://fin-track-api-ags1.onrender.com/api/v1/transactions';
 
       const method = formData._id ? 'put' : 'post';
 
@@ -242,7 +242,7 @@ export default function Transactions() {
     setError(null);
     try {
       await axios.delete(
-        `https://fin-track-api-silk.vercel.app/api/transactions/${id}`,
+        `https://fin-track-api-ags1.onrender.com/api/v1/transactions/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },

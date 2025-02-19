@@ -28,7 +28,7 @@ export default function Budgets() {
   const fetchCategories = async () => {
     try {
       const response = await axios.get(
-        'https://fin-track-api-silk.vercel.app/api/categories',
+        'https://fin-track-api-ags1.onrender.com/api/v1/categories',
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -58,7 +58,7 @@ export default function Budgets() {
   const fetchBudgets = async () => {
     try {
       const response = await axios.get(
-        'https://fin-track-api-silk.vercel.app/api/budgets',
+        'https://fin-track-api-ags1.onrender.com/api/v1/budgets',
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -81,7 +81,7 @@ export default function Budgets() {
     e.preventDefault();
     try {
       await axios.post(
-        'https://fin-track-api-silk.vercel.app/api/budgets',
+        'https://fin-track-api-ags1.onrender.com/api/v1/budgets',
         newBudget,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -104,7 +104,7 @@ export default function Budgets() {
     e.preventDefault();
     try {
       await axios.put(
-        `https://fin-track-api-silk.vercel.app/api/budgets/${editingBudget._id}`,
+        `https://fin-track-api-ags1.onrender.com/api/v1/budgets/${editingBudget._id}`,
         {
           category: editingBudget.category,
           limit: editingBudget.limit,
@@ -122,7 +122,7 @@ export default function Budgets() {
   const handleDeleteBudget = async (id) => {
     try {
       await axios.delete(
-        `https://fin-track-api-silk.vercel.app/api/budgets/${id}`,
+        `https://fin-track-api-ags1.onrender.com/api/v1/budgets/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },

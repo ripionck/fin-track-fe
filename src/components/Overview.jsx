@@ -41,7 +41,7 @@ export default function Overview() {
     const fetchData = async () => {
       try {
         const { data: response } = await axios.get(
-          'https://fin-track-api-silk.vercel.app/api/transactions',
+          'https://fin-track-api-ags1.onrender.com/api/v1/transactions',
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,

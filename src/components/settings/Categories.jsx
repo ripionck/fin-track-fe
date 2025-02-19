@@ -21,7 +21,7 @@ export default function Categories() {
     setError(null);
     try {
       const response = await axios.get(
-        'https://fin-track-api-silk.vercel.app/api/categories',
+        'https://fin-track-api-ags1.onrender.com/api/v1/categories',
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -55,7 +55,7 @@ export default function Categories() {
 
     try {
       await axios.post(
-        'https://fin-track-api-silk.vercel.app/api/categories',
+        'https://fin-track-api-ags1.onrender.com/api/v1/categories',
         { ...newCategory, name: trimmedName },
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -72,7 +72,7 @@ export default function Categories() {
     setError(null);
     try {
       await axios.delete(
-        `https://fin-track-api-silk.vercel.app/api/categories/${id}`,
+        `https://fin-track-api-ags1.onrender.com/api/v1/categories/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
