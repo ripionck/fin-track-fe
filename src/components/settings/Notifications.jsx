@@ -35,6 +35,7 @@ export default function Notifications() {
         setNotifications(response.data);
         setLoading(false);
       } catch (err) {
+        console.error('Error: ', err);
         setError('Failed to load notification settings');
         setLoading(false);
       }
@@ -51,6 +52,7 @@ export default function Notifications() {
       const response = await api.put('/', updatedSettings);
       setNotifications(response.data);
     } catch (err) {
+      console.error('Error: ', err);
       setError('Failed to update settings');
     }
   };
