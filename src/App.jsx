@@ -5,7 +5,7 @@ import {
   Routes,
 } from 'react-router-dom';
 import Analytics from './components/Analytics';
-import Budgets from './components/Budgets';
+import Budgets from './components/budgets/Budgets';
 import Layout from './components/Layout';
 import Overview from './components/Overview';
 import Categories from './components/settings/Categories';
