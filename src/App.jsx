@@ -30,7 +30,6 @@ export default function App() {
           <Route index element={<Navigate to="overview" />} />
           <Route path="overview" element={<Overview />} />
           <Route path="transactions" element={<Transactions />} />
-          <Route path="transactions" element={<Transactions />} />
           <Route path="budgets" element={<Budgets />} />
           <Route path="analytics" element={<Analytics />} />
           <Route path="settings/profile" element={<ProfileSettings />} />
