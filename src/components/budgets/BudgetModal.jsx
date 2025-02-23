@@ -114,8 +114,4 @@ BudgetModal.propTypes = {
   isEdit: PropTypes.bool,
 };
 
-BudgetModal.defaultProps = {
-  isEdit: false,
-};
-
 export default BudgetModal;

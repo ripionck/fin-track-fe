@@ -1,16 +1,13 @@
 import axios from 'axios';
 import { Camera, Save, Trash } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
 
+// Create axios instance with base configuration
 const api = axios.create({
   baseURL: 'https://fin-track-api-ags1.onrender.com/api/v1',
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
-// Add request interceptor to include auth token
+// Add request interceptor for authentication
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -32,106 +29,136 @@ export default function ProfileSettings() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
 
+  // Fetch user profile on mount
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await api.get('/users/me');
-        setProfileData(response.data);
-        setLoading(false);
+        const { data } = await api.get('/users/me');
+        setProfileData(data);
       } catch (err) {
-        console.error('Error:', err.response?.data || err.message);
+        setError(err.response?.data?.error || 'Failed to load profile');
+      } finally {
         setLoading(false);
       }
     };
     fetchProfile();
   }, []);
 
+  // Handle text input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProfileData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Toggle two-factor authentication
   const handleToggle = async () => {
     try {
-      const updatedData = {
-        ...profileData,
+      setIsUpdating(true);
+      const { data } = await api.patch('/users/me', {
         twoFactorEnabled: !profileData.twoFactorEnabled,
-      };
-      await api.put('/users/me', updatedData);
-      setProfileData(updatedData);
+      });
+      setProfileData((prev) => ({ ...prev, ...data }));
       setSuccess('Two-factor authentication updated successfully');
     } catch (err) {
-      console.error('Error:', err.response?.data || err.message);
+      setError(
+        err.response?.data?.error || 'Failed to update security settings',
+      );
+    } finally {
+      setIsUpdating(false);
     }
   };
 
+  // Handle profile form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Clear previous messages
+      setIsUpdating(true);
       setError('');
       setSuccess('');
 
-      const response = await api.put('/users/me', profileData);
+      // Validate required fields
+      if (!profileData.firstName?.trim() || !profileData.lastName?.trim()) {
+        return setError('First and last names are required');
+      }
 
-      // Use response data instead of local state
-      setProfileData(response.data);
+      // Send only allowed fields
+      const updateData = {
+        firstName: profileData.firstName,
+        lastName: profileData.lastName,
+        currency: profileData.currency,
+        bio: profileData.bio,
+      };
+
+      const { data } = await api.patch('/users/me', updateData);
+      setProfileData(data);
       setSuccess('Profile updated successfully');
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to update profile');
+      setError(err.response?.data?.error || 'Failed to update profile');
+    } finally {
+      setIsUpdating(false);
     }
   };
 
+  // Handle avatar upload
   const handleAvatarChange = async (e) => {
     try {
       const file = e.target.files[0];
       if (!file) return;
 
+      // Validate file type
       if (!file.type.startsWith('image/')) {
-        setError('Only image files allowed');
-        return;
+        return setError('Only image files allowed (JPEG, PNG, GIF)');
       }
+
+      setIsUpdating(true);
+      setError('');
+      setSuccess('');
 
       const formData = new FormData();
       formData.append('avatar', file);
 
-      const response = await api.put('/users/me/avatar', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const { data } = await api.put('/users/me/avatar', formData);
 
-      setProfileData((prev) => ({ ...prev, avatar: response.data.avatar }));
-      setSuccess('Avatar updated!');
+      setProfileData((prev) => ({
+        ...prev,
+        avatar: `${data.avatar}?${Date.now()}`,
+      }));
+      setSuccess('Avatar updated successfully!');
     } catch (err) {
-      console.error('Avatar upload error:', err.response?.data || err.message);
-      setError(err.response?.data?.error || err.message || 'Upload failed');
+      setError(err.response?.data?.error || 'Avatar upload failed');
+    } finally {
+      setIsUpdating(false);
     }
   };
 
+  // Handle account deletion
   const handleDeleteAccount = async () => {
     if (
-      window.confirm(
-        'Are you sure you want to delete your account? This action cannot be undone.',
-      )
-    ) {
-      try {
-        await api.delete('/users/me');
-        localStorage.removeItem('token');
-        Navigate('/login');
-      } catch (err) {
-        console.error('Error:', err.response?.data || err.message);
-      }
+      !window.confirm('Permanently delete your account? This cannot be undone!')
+    )
+      return;
+
+    try {
+      setIsUpdating(true);
+      await api.delete('/users/me');
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    } catch (err) {
+      setError(err.response?.data?.error || 'Account deletion failed');
+    } finally {
+      setIsUpdating(false);
     }
   };
 
-  if (loading)
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-32">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500" />
       </div>
     );
+  }
 
   return (
     <div className="space-y-6 max-w-2xl ml-8">
@@ -284,10 +311,11 @@ export default function ProfileSettings() {
         <div className="flex justify-between items-center">
           <button
             type="submit"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            disabled={isUpdating}
+            className="inline-flex items-center px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 disabled:opacity-50"
           >
             <Save className="mr-2 h-4 w-4" />
-            Save Changes
+            {isUpdating ? 'Saving...' : 'Save Changes'}
           </button>
 
           <button
