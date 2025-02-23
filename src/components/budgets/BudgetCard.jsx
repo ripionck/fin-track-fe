@@ -1,11 +1,11 @@
 import { Pencil, Trash2 } from 'lucide-react';
 import PropTypes from 'prop-types';
 
-const BudgetCard = ({ budget, categories, onEdit, onDelete }) => {
+const BudgetCard = ({ budget, onEdit, onDelete }) => {
   const progress = budget.limit > 0 ? (budget.spent / budget.limit) * 100 : 0;
   const safeProgress = Math.min(progress, 100);
   const remaining = budget.limit - budget.spent;
-  const category = categories.find((cat) => cat._id === budget.category);
+  const category = budget.category;
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
@@ -70,17 +70,14 @@ const BudgetCard = ({ budget, categories, onEdit, onDelete }) => {
 BudgetCard.propTypes = {
   budget: PropTypes.shape({
     _id: PropTypes.string.isRequired,
-    category: PropTypes.string.isRequired,
-    limit: PropTypes.number.isRequired,
-    spent: PropTypes.number.isRequired,
-  }).isRequired,
-  categories: PropTypes.arrayOf(
-    PropTypes.shape({
+    category: PropTypes.shape({
       _id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       color: PropTypes.string,
-    }),
-  ).isRequired,
+    }).isRequired,
+    limit: PropTypes.number.isRequired,
+    spent: PropTypes.number.isRequired,
+  }).isRequired,
   onEdit: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
 };

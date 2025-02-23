@@ -17,7 +17,6 @@ const Budgets = () => {
   const [editingBudget, setEditingBudget] = useState({
     _id: '',
     category: '',
-    categoryName: '',
     limit: 0,
   });
 
@@ -32,9 +31,7 @@ const Budgets = () => {
     try {
       const response = await axios.get(
         'https://fin-track-api-ags1.onrender.com/api/v1/categories',
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setCategories(response.data);
       if (response.data.length > 0) {
@@ -49,9 +46,7 @@ const Budgets = () => {
     try {
       const response = await axios.get(
         'https://fin-track-api-ags1.onrender.com/api/v1/budgets',
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setBudgets(response.data || []);
     } catch (error) {
@@ -65,9 +60,7 @@ const Budgets = () => {
       await axios.post(
         'https://fin-track-api-ags1.onrender.com/api/v1/budgets',
         newBudget,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setShowAddModal(false);
       setNewBudget({
@@ -100,9 +93,7 @@ const Budgets = () => {
     try {
       await axios.delete(
         `https://fin-track-api-ags1.onrender.com/api/v1/budgets/${id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       fetchBudgets();
     } catch (error) {
@@ -111,10 +102,10 @@ const Budgets = () => {
   };
 
   const openEditModal = (budget) => {
-    const foundCategory = categories.find((cat) => cat._id === budget.category);
     setEditingBudget({
-      ...budget,
-      categoryName: foundCategory?.name || 'Unknown Category',
+      _id: budget._id,
+      category: budget.category._id,
+      limit: budget.limit,
     });
     setShowEditModal(true);
   };
@@ -168,7 +159,6 @@ const Budgets = () => {
           <BudgetCard
             key={budget._id}
             budget={budget}
-            categories={categories}
             onEdit={openEditModal}
             onDelete={handleDeleteBudget}
           />
@@ -200,7 +190,6 @@ const Budgets = () => {
         title="Edit Budget"
         initialData={{
           category: editingBudget.category,
-          categoryName: editingBudget.categoryName,
           limit: editingBudget.limit,
           setLimit: (value) =>
             setEditingBudget({ ...editingBudget, limit: value }),

@@ -88,7 +88,6 @@ export default function ProfileSettings() {
       const file = e.target.files[0];
       if (!file) return;
 
-      // Client-side validation
       if (!file.type.startsWith('image/')) {
         setError('Only image files allowed');
         return;
@@ -97,15 +96,17 @@ export default function ProfileSettings() {
       const formData = new FormData();
       formData.append('avatar', file);
 
-      const response = await api.put('/users/me/avatar', formData);
+      const response = await api.put('/users/me/avatar', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-      setProfileData((prev) => ({
-        ...prev,
-        avatar: response.data.avatar,
-      }));
+      setProfileData((prev) => ({ ...prev, avatar: response.data.avatar }));
       setSuccess('Avatar updated!');
     } catch (err) {
-      setError(err.response?.data?.error || 'Upload failed');
+      console.error('Avatar upload error:', err.response?.data || err.message);
+      setError(err.response?.data?.error || err.message || 'Upload failed');
     }
   };
 

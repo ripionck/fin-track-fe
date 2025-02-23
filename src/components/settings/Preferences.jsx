@@ -26,6 +26,9 @@ export default function Preferences() {
     const fetchPreferences = async () => {
       try {
         const response = await api.get('/preferences');
+        if (!response.data || typeof response.data !== 'object') {
+          throw new Error('Invalid response from server');
+        }
         setPreferences(response.data);
       } catch (error) {
         setError(error.response?.data?.error || error.message);
@@ -51,8 +54,23 @@ export default function Preferences() {
     setError(null);
     setSuccess(false);
 
+    const allowedFields = [
+      'theme',
+      'dateFormat',
+      'compactView',
+      'language',
+      'startOfWeek',
+      'currency',
+    ];
+    const payload = Object.fromEntries(
+      Object.entries(preferences).filter(([key]) =>
+        allowedFields.includes(key),
+      ),
+    );
+
     try {
-      await api.put('/preferences', preferences);
+      console.log('Updating preferences:', payload);
+      await api.put('/preferences', payload);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (error) {
@@ -72,19 +90,16 @@ export default function Preferences() {
   return (
     <div className="space-y-6 max-w-2xl ml-8 p-4">
       <h2 className="text-2xl font-bold">Preferences</h2>
-
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
           {error}
         </div>
       )}
-
       {success && (
         <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
           Preferences updated successfully!
         </div>
       )}
-
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Theme Selection */}
         <div>
@@ -106,7 +121,6 @@ export default function Preferences() {
             <option value="system">System</option>
           </select>
         </div>
-
         {/* Date Format Selection */}
         <div>
           <label
