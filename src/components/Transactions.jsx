@@ -361,13 +361,6 @@ export default function Transactions() {
         </select>
       </div>
 
-      {loading && (
-        <div className="flex justify-center items-center h-16">
-          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
-      )}
-      {error && <p className="text-center text-red-600">{error}</p>}
-
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <table className="w-full">
           <thead>
@@ -380,58 +373,68 @@ export default function Transactions() {
               <th className="px-6 py-3">Actions</th>
             </tr>
           </thead>
+
           <tbody>
-            {filteredTransactions.map((transaction) => (
-              <tr key={transaction._id} className="border-t">
-                <td className="px-6 py-4">
-                  {new Date(transaction.date).toLocaleDateString()}
+            {loading ? (
+              <tr>
+                <td colSpan="6" className="px-6 py-4">
+                  <div className="flex justify-center items-center h-16">
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+                  </div>
                 </td>
-                <td className="px-6 py-4">{transaction.description}</td>
-                <td className="px-6 py-4">
-                  {transaction.category && transaction.category.name}
+              </tr>
+            ) : error ? (
+              <tr>
+                <td colSpan="6" className="px-6 py-4 text-center text-red-600">
+                  {error}
                 </td>
-                <td className="px-1 py-4">
-                  <span
+              </tr>
+            ) : (
+              filteredTransactions.map((transaction) => (
+                <tr key={transaction._id} className="border-t">
+                  <td className="px-6 py-4">
+                    {new Date(transaction.date).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4">{transaction.description}</td>
+                  <td className="px-6 py-4">
+                    {transaction.category && transaction.category.name}
+                  </td>
+                  <td className="px-1 py-4">
+                    <span className="px-6 py-4 text-right">
+                      {transaction.type}
+                    </span>
+                  </td>
+                  <td
                     className={`px-6 py-4 text-right ${
                       String(transaction.type).toLowerCase() === 'income'
                         ? 'text-green-600'
                         : 'text-red-600'
                     }`}
                   >
-                    {transaction.type}
-                  </span>
-                </td>
-                <td
-                  className={`px-6 py-4 text-right ${
-                    String(transaction.type).toLowerCase() === 'income'
-                      ? 'text-green-600'
-                      : 'text-red-600'
-                  }`}
-                >
-                  {String(transaction.type).toLowerCase() === 'income'
-                    ? '+'
-                    : '-'}
-                  ${Math.abs(transaction.amount).toFixed(2)}
-                </td>
-
-                <td className="px-6 py-4">
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleEdit(transaction)}
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(transaction._id)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                    {String(transaction.type).toLowerCase() === 'income'
+                      ? '+'
+                      : '-'}
+                    ${Math.abs(transaction.amount).toFixed(2)}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handleEdit(transaction)}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(transaction._id)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

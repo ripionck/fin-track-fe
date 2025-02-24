@@ -19,12 +19,23 @@ const Budgets = () => {
     category: '',
     limit: 0,
   });
+  const [isLoading, setIsLoading] = useState(true); // Loading state
 
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    fetchCategories();
-    fetchBudgets();
+    const loadData = async () => {
+      try {
+        setIsLoading(true);
+        await fetchCategories();
+        await fetchBudgets();
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadData();
   }, []);
 
   const fetchCategories = async () => {
@@ -133,37 +144,47 @@ const Budgets = () => {
         </button>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl text-[#1e2e42] font-semibold">
-            Total Monthly Budget
-          </h2>
-          <span className="text-2xl font-bold">${totalBudget.toFixed(2)}</span>
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         </div>
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span>Spent: ${spent.toFixed(2)}</span>
-            <span>Remaining: ${remaining.toFixed(2)}</span>
+      ) : (
+        <>
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl text-[#1e2e42] font-semibold">
+                Total Monthly Budget
+              </h2>
+              <span className="text-2xl font-bold">
+                ${totalBudget.toFixed(2)}
+              </span>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Spent: ${spent.toFixed(2)}</span>
+                <span>Remaining: ${remaining.toFixed(2)}</span>
+              </div>
+              <div className="h-2 bg-gray-200 rounded-full">
+                <div
+                  className="h-full bg-blue-600 rounded-full"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
           </div>
-          <div className="h-2 bg-gray-200 rounded-full">
-            <div
-              className="h-full bg-blue-600 rounded-full"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {budgets.map((budget) => (
-          <BudgetCard
-            key={budget._id}
-            budget={budget}
-            onEdit={openEditModal}
-            onDelete={handleDeleteBudget}
-          />
-        ))}
-      </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {budgets.map((budget) => (
+              <BudgetCard
+                key={budget._id}
+                budget={budget}
+                onEdit={openEditModal}
+                onDelete={handleDeleteBudget}
+              />
+            ))}
+          </div>
+        </>
+      )}
 
       <BudgetModal
         isOpen={showAddModal}

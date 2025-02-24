@@ -3,9 +3,14 @@ import { useEffect, useState } from 'react';
 
 const api = axios.create({
   baseURL: 'https://fin-track-api-ags1.onrender.com/api/v1',
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem('token')}`,
-  },
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 export default function Preferences() {
