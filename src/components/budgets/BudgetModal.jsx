@@ -62,8 +62,11 @@ const BudgetModal = ({
             <label className="block text-sm font-medium mb-1">Limit ($)</label>
             <input
               type="number"
-              value={initialData.limit}
-              onChange={(e) => initialData.setLimit(Number(e.target.value))}
+              value={initialData.limit || ''}
+              onChange={(e) => {
+                const value = e.target.value;
+                initialData.setLimit(value === '' ? null : Number(value));
+              }}
               className="w-full p-2 border rounded"
               min="0"
               step="0.01"
