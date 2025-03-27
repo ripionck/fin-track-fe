@@ -22,7 +22,7 @@ export default function Login() {
 
     try {
       const response = await axios.post(
-        'https://fin-track-api-ags1.onrender.com/api/v1/users/login',
+        'https://fin-track-api-mu.vercel.app/api/v1/users/login',
         formData,
       );
 

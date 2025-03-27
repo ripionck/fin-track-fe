@@ -26,7 +26,7 @@ export default function Layout() {
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get(
-          'https://fin-track-api-ags1.onrender.com/api/v1/users/me',
+          'https://fin-track-api-mu.vercel.app/api/v1/users/me',
           {
             headers: {
               Authorization: `Bearer ${token}`,

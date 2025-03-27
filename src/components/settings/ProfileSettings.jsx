@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL: 'https://fin-track-api-ags1.onrender.com/api/v1',
+  baseURL: 'https://fin-track-api-mu.vercel.app/api/v1',
 });
 
 // Add request interceptor for authentication

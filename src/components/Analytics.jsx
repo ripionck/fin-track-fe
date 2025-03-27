@@ -50,7 +50,7 @@ export default function Analytics() {
       };
 
       const { data } = await axios.get(
-        `https://fin-track-api-ags1.onrender.com/api/v1/analytics/${endpointMap[timeRange]}`,
+        `https://fin-track-api-mu.vercel.app/api/v1/analytics/${endpointMap[timeRange]}`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
 

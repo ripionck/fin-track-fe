@@ -66,7 +66,7 @@ export default function Register() {
 
     try {
       const response = await axios.post(
-        'https://fin-track-api-ags1.onrender.com/api/v1/users/register',
+        'https://fin-track-api-mu.vercel.app/api/v1/users/register',
         {
           firstName: formData.firstName,
           lastName: formData.lastName,

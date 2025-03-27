@@ -41,7 +41,7 @@ const Budgets = () => {
   const fetchCategories = async () => {
     try {
       const response = await axios.get(
-        'https://fin-track-api-ags1.onrender.com/api/v1/categories',
+        'https://fin-track-api-mu.vercel.app/api/v1/categories',
         { headers: { Authorization: `Bearer ${token}` } },
       );
       setCategories(response.data);
